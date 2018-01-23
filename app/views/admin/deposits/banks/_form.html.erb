@@ -1,0 +1,18 @@
+<%= form_for (@bank, as: :deposit) do |f| %>
+  <dl class="dl-horizontal dl-member">
+    <dt><%= t('.sn') %></dt>
+    <dd><%= f.text_field :sn, class: 'col-xs-24' %></dd>
+    <dt><%= t('.amount') %></dt>
+    <dd><%= f.text_field :amount, class: 'col-xs-24' %></dd>
+    <dt><%= t('.done_at') %></dt>
+    <dd><%= f.text_field :done_at, class: 'col-xs-24' %></dd>
+    <% if @bank.may_submit? or @bank.may_accept? %>
+      <dt><%= t('.txid') %></dt>
+      <dd><%= f.text_field :txid, class: 'col-xs-24' %></dd>
+      <hr class="split">
+    <% else %>
+      <%= item_for @bank, :txid %>
+    <% end %>
+  </dl>
+  <%= f.submit %>
+<% end %>

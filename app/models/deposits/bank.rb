@@ -5,6 +5,7 @@ module Deposits
     include ::FundSourceable
 
     def charge!(txid)
+      binding.pry
       with_lock do
         submit!
         accept!

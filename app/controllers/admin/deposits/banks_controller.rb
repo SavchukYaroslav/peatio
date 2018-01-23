@@ -16,6 +16,12 @@ module Admin
         @available_banks -= @oneday_banks
       end
 
+      def create
+        binding.pry
+        Deposits::Bank.create(target_params)
+        redirect_to :back
+      end
+
       def show
         flash.now[:notice] = t('.notice') if @bank.aasm_state.accepted?
       end
@@ -33,7 +39,7 @@ module Admin
 
       private
       def target_params
-        params.require(:deposits_bank).permit(:sn, :holder, :amount, :created_at, :txid)
+        params.require(:deposits_bank).permit(:sn, :member, :amount, :created_at, :txid)
       end
     end
   end

@@ -1,0 +1,15 @@
+<%= form_for [:admin, @bank], url: { action: 'create' } do |f| %>
+  <dl class="dl-horizontal dl-member">
+    <dt><%= t('.sn') %></dt>
+    <dd><%= f.text_field :sn, class: 'col-xs-24' %></dd>
+    <dt><%= t('.txid') %></dt>
+    <dd><%= f.text_field :txid, class: 'col-xs-24' %></dd>
+    <dt><%= t('.amount') %></dt>
+    <dd><%= f.text_field :amount, class: 'col-xs-24' %></dd>
+    <dt><%= t('.member') %></dt>
+    <dd><%= f.text_field :member, class: 'col-xs-24' %></dd>
+
+  </dl>
+  <%= f.submit %>
+<% end %>
+
