@@ -109,7 +109,6 @@ class Deposit < ActiveRecord::Base
   end
 
   def set_fee
-    # binding.pry
     amount, fee = calc_fee
     self.amount = amount
     self.fee = fee

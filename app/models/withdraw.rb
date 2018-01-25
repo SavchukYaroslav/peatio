@@ -136,13 +136,10 @@ class Withdraw < ActiveRecord::Base
   end
 
   def audit!
-    binding.pry
     with_lock do
       if account.examine
         accept
-        binding.pry
         process if quick?
-        binding.pry
       else
         mark_suspect
       end
@@ -186,7 +183,6 @@ class Withdraw < ActiveRecord::Base
   end
 
   def send_email
-    binding.pry
     case aasm_state
     when 'submitted'
       WithdrawMailer.submitted(self.id).deliver
@@ -200,7 +196,6 @@ class Withdraw < ActiveRecord::Base
   end
 
   def send_coins!
-    binding.pry
     AMQPQueue.enqueue(:withdraw_coin, id: id) if coin?
   end
 
