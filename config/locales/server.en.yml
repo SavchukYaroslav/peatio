@@ -1261,7 +1261,6 @@ en:
     new:
     create:
       disabled: Your account has been disabled, contact admin if you have any problem.
-    failure:
       account_locked: Too many failed login attempts. To ensure the safety of your
         account, we have locked your account. To unlock, reset your password by clicking
         on "Forgot Password".
