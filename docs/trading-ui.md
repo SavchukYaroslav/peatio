@@ -1,7 +1,6 @@
 ![image](assets/insert-order.png)
 
 ### /v2/orders
----
 ##### ***POST***
 **Summary:** Create a Sell/Buy order.
 
@@ -45,11 +44,9 @@
 
 
 ---
-
 ![image](assets/bid-orders.png)
 ![image](assets/ask-orders.png)
 ### /v2/order_book
----
 ##### ***GET***
 **Description:** Get the order book of specified market.
 
@@ -76,11 +73,14 @@
 | asks | [Order](#order) |  | No |
 | bids | [Order](#order) |  | No |
 
-
+---
 ![image](assets/my-orders.png)
+![image](assets/orders-history.png)
+
+# NOTE: for getting orders history you need to pass state (wait, done, cancel) 
 
 **Body**
-
+### /v2/orders
 ##### ***GET***
 
 **Description:** Get your orders, results is paginated.
@@ -104,3 +104,5 @@
 **Body**
 
 [Order](#order)
+
+
