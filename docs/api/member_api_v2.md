@@ -581,3 +581,19 @@ Get a currency
 | ---- | ---- | ----------- | -------- |
 | asks | [Order](#order) |  | No |
 | bids | [Order](#order) |  | No |
+
+### Member  
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| sn | string |  | No |
+| email | string |  | No |
+| accounts | [Account](#account) |  | No |
+
+### Account  
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| currency | string |  | No |
+| balance | string |  | No |
+| locked | string |  | No |
