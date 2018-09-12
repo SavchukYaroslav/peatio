@@ -26,6 +26,23 @@
 
 [Order](#order)
 
+### /v2/order/delete
+---
+##### ***POST***
+**Description:** Cancel an order.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | formData |  | Yes | integer |
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | Cancel an order. |
+
 ---
 ![image](assets/bid-orders.png)
 ![image](assets/ask-orders.png)
