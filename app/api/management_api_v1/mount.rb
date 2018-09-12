@@ -59,6 +59,9 @@ module ManagementAPIv1
                                 title:       'Management API v1',
                                 description: 'Management API is server-to-server API with high privileges.',
                                 licence:     'MIT',
-                                license_url: 'https://github.com/rubykube/peatio/blob/master/LICENSE.md' }
+                                license_url: 'https://github.com/rubykube/peatio/blob/master/LICENSE.md' },
+                              models: [
+                                  Entities::Order,
+                              ],
   end
 end
