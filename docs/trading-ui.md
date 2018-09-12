@@ -1,50 +1,3 @@
-# Responses
-
-## Order
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| id | string | Unique order id. | No |
-| side | string | Either 'sell' or 'buy'. | No |
-| ord_type | string | Type of order, either 'limit' or 'market'. | No |
-| price | string | Price for each unit. e.g. If you want to sell/buy 1 btc at 3000 usd, the price is '3000.0' | No |
-| avg_price | string | Average execution price, average of price in trades. | No |
-| state | string | One of 'wait', 'done', or 'cancel'. An order in 'wait' is an active order, waiting fulfillment; a 'done' order is an order fulfilled; 'cancel' means the order has been canceled. | No |
-| market | string | The market in which the order is placed, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | No |
-| created_at | string | Order create time in iso8601 format. | No |
-| volume | string | The amount user want to sell/buy. An order could be partially executed, e.g. an order sell 5 btc can be matched with a buy 3 btc order, left 2 btc to be sold; in this case the order's volume would be '5.0', its remaining_volume would be '2.0', its executed volume is '3.0'. | No |
-| remaining_volume | string | The remaining volume, see 'volume'. | No |
-| executed_volume | string | The executed volume, see 'volume'. | No |
-| trades_count | string |  | No |
-| trades | string |  | No |
-
-
-### OrderBook  
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| asks | [Order](#order) |  | No |
-| bids | [Order](#order) |  | No |
-
-
-### Member  
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| sn | string |  | No |
-| email | string |  | No |
-| accounts | [Account](#account) |  | No |
-
-### Account  
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| currency | string |  | No |
-| balance | string |  | No |
-| locked | string |  | No |
-
-
----
 ![image](assets/insert-order.png)
 
 ### /v2/orders
@@ -102,7 +55,7 @@
 ![image](assets/my-orders.png)
 ![image](assets/orders-history.png)
 
-# NOTE: for getting orders history or active orders you need to pass state (wait, done, cancel) 
+## NOTE: for getting orders history or active orders you need to pass state (wait, done, cancel) 
 
 **Response Body**
 ### /v2/orders
@@ -145,10 +98,99 @@
 
 **Response Body**
 
-[Member](member)
+[Member](#member)
+
+
+![image](assets/market-volumes.png)
+
+### /v2/tickers/{market}
+##### ***GET***
+**Description:** Get ticker of specific market.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| market | path | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Get ticker of specific market. |
+
+**Response Body**
+
+[Ticker](#ticker)
 
 
 
 
+---
+![image](assets/market-chart.png)
+
+## TODO
+
+---
+
+# Responses
+
+## Order
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | string | Unique order id. | No |
+| side | string | Either 'sell' or 'buy'. | No |
+| ord_type | string | Type of order, either 'limit' or 'market'. | No |
+| price | string | Price for each unit. e.g. If you want to sell/buy 1 btc at 3000 usd, the price is '3000.0' | No |
+| avg_price | string | Average execution price, average of price in trades. | No |
+| state | string | One of 'wait', 'done', or 'cancel'. An order in 'wait' is an active order, waiting fulfillment; a 'done' order is an order fulfilled; 'cancel' means the order has been canceled. | No |
+| market | string | The market in which the order is placed, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | No |
+| created_at | string | Order create time in iso8601 format. | No |
+| volume | string | The amount user want to sell/buy. An order could be partially executed, e.g. an order sell 5 btc can be matched with a buy 3 btc order, left 2 btc to be sold; in this case the order's volume would be '5.0', its remaining_volume would be '2.0', its executed volume is '3.0'. | No |
+| remaining_volume | string | The remaining volume, see 'volume'. | No |
+| executed_volume | string | The executed volume, see 'volume'. | No |
+| trades_count | string |  | No |
+| trades | string |  | No |
 
 
+### OrderBook  
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| asks | [Order](#order) |  | No |
+| bids | [Order](#order) |  | No |
+
+### Member  
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| sn | string |  | No |
+| email | string |  | No |
+| accounts | [Account](#account) |  | No |
+
+### Account  
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| currency | string |  | No |
+| balance | string |  | No |
+| locked | string |  | No |
+
+### Ticker
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| at | string |  | No |
+| ticker | [TickerEntry](#tickerentry) |  | No |
+
+### TickerEntry
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| buy | string |  | No |
+| sell | string |  | No |
+| low | string |  | No |
+| high | string |  | No |
+| last | string |  | No |
+| vol | string |  | No |
