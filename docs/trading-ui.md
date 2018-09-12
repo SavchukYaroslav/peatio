@@ -23,7 +23,7 @@
 | ---- | ----------- |
 | 201 | Create a Sell/Buy order. |
 
-**Body**
+**Response Body**
 
 ## Order
 
@@ -77,9 +77,12 @@
 | bids | [Order](#order) |  | No |
 
 
+![image](assets/my-orders.png)
 
 **Body**
+
 ##### ***GET***
+
 **Description:** Get your orders, results is paginated.
 
 **Parameters**
@@ -97,3 +100,7 @@
 | Code | Description |
 | ---- | ----------- |
 | 200 | Get your orders, results is paginated. |
+
+**Body**
+
+[Order](#order)
