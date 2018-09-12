@@ -44,8 +44,8 @@
 
 ---
 
-![image](assets/insert-order.png)
-
+![image](assets/bid-orders.png)
+![image](assets/ask-orders.png)
 ### /v2/order_book
 ---
 ##### ***GET***
@@ -91,3 +91,25 @@
 | ---- | ---- | ----------- | -------- |
 | asks | [Order](#order) |  | No |
 | bids | [Order](#order) |  | No |
+
+
+
+**Body**
+##### ***GET***
+**Description:** Get your orders, results is paginated.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| state | query | Filter order by state, default to 'wait' (active orders). | No | string |
+| limit | query | Limit the number of returned orders, default to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| order_by | query | If set, returned orders will be sorted in specific order, default to 'asc'. | No | string |
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Get your orders, results is paginated. |
