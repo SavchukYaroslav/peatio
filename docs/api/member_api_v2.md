@@ -40,7 +40,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | path | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | path |  | Yes | string |
 
 **Responses**
 
@@ -165,7 +165,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | formData | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | formData |  | Yes | string |
 | side | formData |  | Yes | string |
 | volume | formData |  | Yes | float |
 | ord_type | formData |  | No | string |
@@ -184,7 +184,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | query |  | Yes | string |
 | state | query | Filter order by state, default to 'wait' (active orders). | No | string |
 | limit | query | Limit the number of returned orders, default to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
@@ -205,7 +205,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | formData | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | formData |  | Yes | string |
 | orders[side] | formData |  | Yes | [ string ] |
 | orders[volume] | formData |  | Yes | [ float ] |
 | orders[ord_type] | formData |  | No | [ string ] |
@@ -260,7 +260,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | query |  | Yes | string |
 | asks_limit | query | Limit the number of returned sell orders. Default to 20. | No | integer |
 | bids_limit | query | Limit the number of returned buy orders. Default to 20. | No | integer |
 
@@ -279,7 +279,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | query |  | Yes | string |
 | limit | query | Limit the number of returned price levels. Default to 300. | No | integer |
 
 **Responses**
@@ -297,7 +297,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | query |  | Yes | string |
 | limit | query | Limit the number of returned trades. Default to 50. | No | integer |
 | timestamp | query | An integer represents the seconds elapsed since Unix epoch. If set, only trades executed before the time will be returned. | No | integer |
 | from | query | Trade id. If set, only trades created after the trade will be returned. | No | integer |
@@ -319,7 +319,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | query |  | Yes | string |
 | limit | query | Limit the number of returned trades. Default to 50. | No | integer |
 | timestamp | query | An integer represents the seconds elapsed since Unix epoch. If set, only trades executed before the time will be returned. | No | integer |
 | from | query | Trade id. If set, only trades created after the trade will be returned. | No | integer |
@@ -341,7 +341,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | query |  | Yes | string |
 | limit | query | Limit the number of returned data points, default to 30. | No | integer |
 | period | query | Time period of K line, default to 1. You can choose between 1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 4320, 10080 | No | integer |
 | time_from | query | An integer represents the seconds elapsed since Unix epoch. If set, only k-line data after that time will be returned. | No | integer |
@@ -362,7 +362,7 @@ hello@peatio.tech
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| market | query | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | Yes | string |
+| market | query |  | Yes | string |
 | trade_id | query | The trade id of the first trade you received. | Yes | integer |
 | limit | query | Limit the number of returned data points, default to 30. | No | integer |
 | period | query | Time period of K line, default to 1. You can choose between 1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 4320, 10080 | No | integer |
@@ -597,3 +597,10 @@ Get a currency
 | currency | string |  | No |
 | balance | string |  | No |
 | locked | string |  | No |
+
+### Market  
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | string | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | No |
+| name | string |  | No |

@@ -24,7 +24,8 @@
 
 **Response Body**
 
-[Order](#order)
+[[Order](#order)]
+### NOTE: Array is returned
 
 ### /v2/order/delete
 ---
@@ -98,7 +99,8 @@
 
 **Response Body**
 
-[Order](#order)
+[[Order](#order)]
+### NOTE: Array is returned
 
 ---
 ![image](assets/total-balance.png)
@@ -140,8 +142,25 @@
 
 [Ticker](#ticker)
 
+---
+![image](assets/all-markets.png)
 
 
+### /v2/markets
+---
+##### ***GET***
+**Description:** Get all available markets.
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Get all available markets. |
+
+**Response Body**
+
+[[Market](#market)]
+### NOTE: Array is returned
 
 ---
 ![image](assets/market-chart.png)
@@ -211,3 +230,23 @@
 | high | string |  | No |
 | last | string |  | No |
 | vol | string |  | No |
+
+### Market  
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | string | Unique market id. It's always in the form of xxxyyy, where xxx is the base currency code, yyy is the quote currency code, e.g. 'btcusd'. All available markets can be found at /api/v2/markets. | No |
+| name | string |  | No |
+
+```json
+[
+  {
+    "id": "usdbtc",
+    "name": "USD/BTC"
+  },
+  {
+    "id": "usdxrp",
+    "name": "USD/XRP"
+  }
+]
+```

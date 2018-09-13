@@ -70,7 +70,7 @@ module APIv2
                                 license_url:   'https://github.com/rubykube/peatio/blob/master/LICENSE.md'
                               },
                               models: [
-                                Entities::Currency, Entities::Order, Entities::OrderBook, Entities::Member, Entities::Account
+                                Entities::Currency, Entities::Order, Entities::OrderBook, Entities::Member, Entities::Account, Entities::Market
                               ],
                               security_definitions: {
                                 Bearer: {
