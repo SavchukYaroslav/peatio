@@ -147,7 +147,6 @@
 
 
 ### /v2/markets
----
 ##### ***GET***
 **Description:** Get all available markets.
 
