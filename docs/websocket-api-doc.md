@@ -16,6 +16,16 @@
 }
 ```
 
+*trade*
+```ruby
+{ id:     id,
+  kind:   kind || side, # ask or bid
+  at:     created_at.to_i,
+  price:  price.to_s  || ZERO,
+  volume: volume.to_s || ZERO,
+  market: market }
+
+```
 
 ## Channel name "market-#{market.id}-global"
 
@@ -29,6 +39,18 @@
   asks: [[0.4e1, 0.1e-1], [0.3e1, 0.401e1]], # first is price & second is total volume
   bids: [[0.5e1, 0.4e1]]
 }
+```
+
+*trades*
+
+```ruby
+[
+  { tid:    id,
+    type:   trend == 'down' ? 'sell' : 'buy',
+    date:   created_at.to_i,
+    price:  price.to_s || ZERO,
+    amount: volume.to_s || ZERO }
+]
 ```
 
 ## Channel name "market-global"

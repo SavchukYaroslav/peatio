@@ -14,3 +14,11 @@ module Worker
     end
   end
 end
+
+
+def process(payload)
+  trade = Trade.new(payload)
+  Pusher["private-#{trade.ask.member.sn}"].trigger(:trade, trade.for_notify('ask'))
+  Pusher["private-#{trade.bid.member.sn}"].trigger(:trade, trade.for_notify('bid'))
+  Pusher["market-#{trade.market.id}-global"].trigger(:trades, trades: [trade.for_global])
+end
