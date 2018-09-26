@@ -14,6 +14,8 @@ class Withdraw < ActiveRecord::Base
                confirming].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
 
+  has_many :fees, as: :parent
+
   include AASM
   include AASM::Locking
   include BelongsToCurrency
