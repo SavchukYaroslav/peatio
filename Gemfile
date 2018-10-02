@@ -59,6 +59,12 @@ gem 'digest-sha3', '~> 1.1.0'
 gem 'scout_apm', '~> 2.4', require: false
 gem 'peatio', '~> 0.4.2'
 
+# Load Gemfile with plugins.
+Dir.glob File.expand_path('../Gemfile.plugin', __FILE__) do |file|
+  eval_gemfile file
+end
+
+
 group :development, :test do
   gem 'faker',        '~> 1.8'
   gem 'pry-byebug',   '~> 3.6'
