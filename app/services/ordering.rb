@@ -31,6 +31,7 @@ private
 
   def do_submit(order)
     order.fix_number_precision # number must be fixed before computing locked
+    Peatio::FeesService
     order.locked = order.origin_locked = order.compute_locked
     order.save!
     order.hold_account!.lock_funds!(order.locked)
