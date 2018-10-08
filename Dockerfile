@@ -1,4 +1,4 @@
-FROM ruby:2.5.1
+FROM ruby:2.5.1 as base
 
 MAINTAINER lbellet@heliostech.fr
 
@@ -60,3 +60,11 @@ EXPOSE 3000
 
 # The main command to run when the container starts.
 CMD ["bundle", "exec", "puma", "--config", "config/puma.rb"]
+
+
+# Build plugin.
+FROM base
+
+COPY Gemfile.plugin $APP_HOME
+
+RUN bundle install --path /opt/vendor/bundle

@@ -9,13 +9,6 @@ GIT
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
 
-PATH
-  remote: ../peatio-fee_service-takerfee
-  specs:
-    peatio-fee_service-takerfee (0.1.0)
-      method-not-implemented (~> 1.0.1)
-      peatio (~> 0.4.2)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -444,7 +437,6 @@ DEPENDENCIES
   omniauth-google-oauth2 (~> 0.5.3)
   passgen (~> 1.0.2)
   peatio (~> 0.4.2)
-  peatio-fee_service-takerfee!
   pry-byebug (~> 3.6)
   puma (~> 3.11.4)
   quiet_assets (~> 1.1)

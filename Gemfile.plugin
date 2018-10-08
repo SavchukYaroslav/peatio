@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 
-gem 'peatio-fee_service-takerfee', path: '/home/yarpolk/work/rubykube/peatio-fee_service-takerfee'
+# gem 'peatio-fee_service-takerfee', path: '/home/yarpolk/work/rubykube/peatio-fee_service-takerfee'
