@@ -97,14 +97,12 @@ module ManagementAPIv1
         tid:            params[:tid],
         rid:            params[:rid]
 
-      if withdraw.save
-        withdraw.with_lock { withdraw.submit! }
+      WithdrawService.new(withdraw).submit!
         perform_action(withdraw, params[:action]) if params[:action]
         present withdraw, with: ManagementAPIv1::Entities::Withdraw
-      else
-        body errors: withdraw.errors.full_messages
-        status 422
-      end
+    rescue WithdrawService
+      body errors: withdraw.errors.full_messages
+      status 422
     end
 
     desc 'Performs action on withdraw.' do

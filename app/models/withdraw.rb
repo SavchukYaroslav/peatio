@@ -15,6 +15,7 @@ class Withdraw < ActiveRecord::Base
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
 
   has_many :fees, as: :parent
+  attr_readonly :amount, :fee, :sum
 
   include AASM
   include AASM::Locking
@@ -22,16 +23,29 @@ class Withdraw < ActiveRecord::Base
   include BelongsToMember
   include BelongsToAccount
   include TIDIdentifiable
-  include FeeChargeable
+  # include FeeChargeable
 
   acts_as_eventable prefix: 'withdraw', on: %i[create update]
 
+  before_validation on: :create do
+    next unless currency
+
+    if sum.present?
+      self.sum = sum.round(currency.precision, BigDecimal::ROUND_DOWN)
+    end
+    self.amount = sum
+    # TODO: Remove me.
+    self.fee = 0
+  end
+
   before_validation(on: :create) { self.account ||= member&.ac(currency) }
+  before_validation(on: :create) { lock_funds }
   before_validation { self.completed_at ||= Time.current if completed? }
 
   validates :rid, :aasm_state, presence: true
   validates :txid, uniqueness: { scope: :currency_id }, if: :txid?
   validates :block_number, allow_blank: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  validates :sum, presence: true, numericality: { greater_than: 0.to_d }
 
   scope :completed, -> { where(aasm_state: COMPLETED_STATES) }
 
@@ -49,7 +63,6 @@ class Withdraw < ActiveRecord::Base
 
     event :submit do
       transitions from: :prepared, to: :submitted
-      after :lock_funds
     end
 
     event :cancel do

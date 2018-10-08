@@ -1,0 +1,31 @@
+# encoding: UTF-8
+# frozen_string_literal: true
+
+class WithdrawService
+  Error = Class.new(StandardError)
+
+  attr_accessor :withdraw
+
+  def initialize(withdraw)
+    @withdraw = withdraw
+  end
+
+  def submit
+    submit!
+  rescue Error
+    false
+  end
+
+  def submit!
+    ActiveRecord::Base.transaction do
+      Peatio::FeeService.lock!(:withdraw, withdraw)
+      binding.pry
+      withdraw.save!
+      withdraw.submit!
+    end
+
+  # TODO: Beautiful exceptions handling.
+  rescue StandardError => e
+    raise Error, e.message
+  end
+end

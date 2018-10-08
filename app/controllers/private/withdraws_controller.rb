@@ -8,12 +8,12 @@ module Private
     def create
       @withdraw = withdraw_class.new(withdraw_params)
 
-      if @withdraw.save
-        @withdraw.submit!
-        head 204
-      else
-        render text: @withdraw.errors.full_messages.join(', '), status: 422
-      end
+      binding.pry
+      WithdrawService.new(@withdraw).submit!
+      head 204
+
+    rescue WithdrawService::Error => e
+        render text: e.message, status: 422
     end
 
     def destroy
