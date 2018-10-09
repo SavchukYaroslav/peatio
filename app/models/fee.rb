@@ -2,13 +2,18 @@
 # frozen_string_literal: true
 
 class Fee < ActiveRecord::Base
+
+  PLATFORM_ACCOUNT_ID = nil
+
   belongs_to :parent, polymorphic: true
+
+  # source_account is nil if fees are paid from platform account.
   belongs_to :source_account, class_name: Account
 
   # target_account is nil if fees are paid to platform account.
   belongs_to :target_account, class_name: Account
 
-  validates :parent, :source_account, :amount, presence: true
+  validates :parent, :amount, presence: true
 end
 
 # == Schema Information
