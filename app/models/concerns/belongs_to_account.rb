@@ -1,6 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+# TODO: thins module should be removed!!!
 module BelongsToAccount
   extend ActiveSupport::Concern
 

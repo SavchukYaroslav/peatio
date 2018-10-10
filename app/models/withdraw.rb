@@ -21,12 +21,11 @@ class Withdraw < ActiveRecord::Base
   include AASM::Locking
   include BelongsToCurrency
   include BelongsToMember
-  include BelongsToAccount
   include TIDIdentifiable
-  # include FeeChargeable
 
   acts_as_eventable prefix: 'withdraw', on: %i[create update]
 
+  # TODO: remove sum.
   before_validation on: :create do
     next unless currency
 
@@ -38,7 +37,6 @@ class Withdraw < ActiveRecord::Base
     self.fee = 0
   end
 
-  before_validation(on: :create) { self.account ||= member&.ac(currency) }
   before_validation(on: :create) { lock_funds }
   before_validation { self.completed_at ||= Time.current if completed? }
 
@@ -90,7 +88,7 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :dispatch do
-      # TODO: add validations that txid and block_number are not blank.
+      # TODO: add validations that txid and block_number are not blank on this stage.
       transitions from: :processing, to: :confirming
     end
 
@@ -114,6 +112,10 @@ class Withdraw < ActiveRecord::Base
       accept!
       process! if quick? && currency.coin?
     end
+  end
+
+  def account
+    @account ||= member&.ac(currency)
   end
 
   def fiat?
@@ -162,12 +164,11 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180925123806
+# Schema version: 20181010123924
 #
 # Table name: withdraws
 #
 #  id           :integer          not null, primary key
-#  account_id   :integer          not null
 #  member_id    :integer          not null
 #  currency_id  :string(10)       not null
 #  amount       :decimal(32, 16)  not null
@@ -186,7 +187,6 @@ end
 # Indexes
 #
 #  index_withdraws_on_aasm_state            (aasm_state)
-#  index_withdraws_on_account_id            (account_id)
 #  index_withdraws_on_currency_id           (currency_id)
 #  index_withdraws_on_currency_id_and_txid  (currency_id,txid) UNIQUE
 #  index_withdraws_on_member_id             (member_id)

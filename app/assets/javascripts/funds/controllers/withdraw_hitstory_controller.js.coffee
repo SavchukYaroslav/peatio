@@ -3,6 +3,8 @@ app.controller 'WithdrawHistoryController', ($scope, $stateParams, $http) ->
   $scope.predicate = '-id'
   @currency = $stateParams.currency
   @account = Account.findBy('currency', @currency)
+  console.log('withraw account is ')
+  console.log(@account.withdraws())
   @withdraws = @account.withdraws()
   @newRecord = (withdraw) -> withdraw.aasm_state is 'created'
 

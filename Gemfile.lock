@@ -10,7 +10,7 @@ GIT
       rack (>= 1.2, < 3)
 
 PATH
-  remote: ../peatio-fee_service-takerfee
+  remote: ../peatio-takerfee
   specs:
     peatio-fee_service-takerfee (0.1.0)
       method-not-implemented (~> 1.0.1)

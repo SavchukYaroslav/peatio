@@ -3,6 +3,8 @@ app.controller 'DepositHistoryController', ($scope, $stateParams, $http) ->
   $scope.predicate = '-id'
   @currency = $stateParams.currency
   @account = Account.findBy('currency', @currency)
+  console.log('deposit account is ')
+  console.log(@account.deposits())
   @deposits = @account.deposits()
   @newRecord = (deposit) ->
     deposit.aasm_state is 'submitted'

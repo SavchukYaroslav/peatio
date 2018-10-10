@@ -13,7 +13,7 @@ module Private
       head 204
 
     rescue WithdrawService::Error => e
-        render text: e.message, status: 422
+      render text: e.message, status: 422
     end
 
     def destroy

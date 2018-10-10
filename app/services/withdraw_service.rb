@@ -18,12 +18,16 @@ class WithdrawService
 
   def submit!
     ActiveRecord::Base.transaction do
-      Peatio::FeeService.lock!(:withdraw, withdraw)
+      binding.pry
+      # We save withdraw and fees in single transaction.
+      fee_service = Peatio::FeeService.on_submit(:withdraw, withdraw)
+      withdraw.fees = fee_service.fees
       binding.pry
       withdraw.save!
+      binding.pry
+      fee_service.submit!
       withdraw.submit!
     end
-
   # TODO: Beautiful exceptions handling.
   rescue StandardError => e
     raise Error, e.message

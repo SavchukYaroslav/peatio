@@ -38,6 +38,10 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def withdraws
+    Withdraw.where(currency_id: currency_id, member_id: member_id)
+  end
+
   def plus_funds!(amount)
     update_columns((attributes_after_plus_funds!(amount)))
   end
