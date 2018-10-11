@@ -77,7 +77,7 @@ module BlockchainService
         end
 
         withdrawal.update_column(:block_number, withdrawal_hash.fetch(:block_number))
-        withdrawal.success! if withdrawal.confirmations >= blockchain.min_confirmations
+        WithdrawService.new(withdrawal).complete! if withdrawal.confirmations >= blockchain.min_confirmations
       end
     end
 

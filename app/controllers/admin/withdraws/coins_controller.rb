@@ -34,7 +34,7 @@ module Admin
       end
 
       def destroy
-        @withdraw.reject!
+        WithdrawService.new(@withdraw).reject!
         redirect_to :back, notice: t('admin.withdraws.coins.update.notice')
       end
     end

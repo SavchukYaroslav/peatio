@@ -16,11 +16,11 @@ module ManagementAPIv1
                 if withdraw.quick?
                   withdraw.process!
                   withdraw.dispatch!
-                  withdraw.success!
+                  WithdrawService.new(withdraw).complete!
                 end
               end
             when 'cancel'
-              withdraw.cancel!
+              WithdrawService.new(withdraw).cancel!
           end
         end
       end

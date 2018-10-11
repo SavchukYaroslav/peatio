@@ -8,7 +8,6 @@ module Private
     def create
       @withdraw = withdraw_class.new(withdraw_params)
 
-      binding.pry
       WithdrawService.new(@withdraw).submit!
       head 204
 
@@ -19,8 +18,7 @@ module Private
     def destroy
       Withdraw.transaction do
         @withdraw = current_user.withdraws.find(params[:id]).lock!
-        @withdraw.cancel
-        @withdraw.save!
+        WithdrawService.new(@withdraw).cancel!
       end
       head 204
     end

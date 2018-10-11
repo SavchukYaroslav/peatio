@@ -28,7 +28,7 @@ module Withdraws
 
       if inspection[:is_valid] == false
         Rails.logger.info { "#{self.class.name}##{id} uses invalid address: #{rid.inspect}" }
-        reject!
+        WithdrawService.new(self).reject!
       else
         super
       end

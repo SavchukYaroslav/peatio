@@ -30,13 +30,14 @@ module Admin
           @withdraw.accept!
           @withdraw.process!
           @withdraw.dispatch!
-          @withdraw.success!
+          WithdrawService.new(@withdraw).complete!
         end
         redirect_to :back, notice: 'Withdraw successfully updated!'
       end
 
       def destroy
-        @withdraw.reject!
+        binding.pry
+        WithdrawService.new(@withdraw).reject!
         redirect_to :back, notice: 'Withdraw successfully destroyed!'
       end
     end

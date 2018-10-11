@@ -37,7 +37,6 @@ class Withdraw < ActiveRecord::Base
     self.fee = 0
   end
 
-  before_validation(on: :create) { lock_funds }
   before_validation { self.completed_at ||= Time.current if completed? }
 
   validates :rid, :aasm_state, presence: true
@@ -61,6 +60,7 @@ class Withdraw < ActiveRecord::Base
 
     event :submit do
       transitions from: :prepared, to: :submitted
+      after :lock_funds
     end
 
     event :cancel do
