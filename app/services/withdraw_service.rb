@@ -10,19 +10,13 @@ class WithdrawService
     @withdraw = withdraw
   end
 
-  def submit
-    submit!
-  rescue Error
-    false
-  end
-
   def submit!
     ActiveRecord::Base.transaction do
+      raise Error, 'Can\'t submit withdrawal' unless withdraw.submit
       fee_service = Peatio::FeeService.on_submit(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      withdraw.save!
       Peatio::FeeService.new(withdraw.fees).submit!
-      withdraw.submit!
+      withdraw.save!
     end
   rescue StandardError => e
     raise Error, e.message
@@ -30,12 +24,12 @@ class WithdrawService
 
   def complete!
     ActiveRecord::Base.transaction do
+      raise Error, 'Can\'t complete withdrawal' unless withdraw.success
       fee_service = Peatio::FeeService.on_complete(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      withdraw.save!
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
-      withdraw.success!
+      withdraw.save!
     end
   rescue StandardError => e
     raise Error, e.message
@@ -43,12 +37,12 @@ class WithdrawService
 
   def cancel!
     ActiveRecord::Base.transaction do
+      raise Error, 'Can\'t cancel withdrawal' unless withdraw.cancel
       fee_service = Peatio::FeeService.on_cancel(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      withdraw.save!
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
-      withdraw.cancel!
+      withdraw.save!
     end
   rescue StandardError => e
     raise Error, e.message
@@ -56,12 +50,12 @@ class WithdrawService
 
   def reject!
     ActiveRecord::Base.transaction do
+      raise Error, 'Can\'t cancel withdrawal' unless withdraw.reject
       fee_service = Peatio::FeeService.on_cancel(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      withdraw.save!
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
-      withdraw.reject!
+      withdraw.save!
     end
   rescue StandardError => e
     raise Error, e.message

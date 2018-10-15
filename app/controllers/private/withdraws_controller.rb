@@ -21,6 +21,9 @@ module Private
         WithdrawService.new(@withdraw).cancel!
       end
       head 204
+
+    rescue WithdrawService::Error => e
+      render text: e.message, status: 422
     end
 
   private

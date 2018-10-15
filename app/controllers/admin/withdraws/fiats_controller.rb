@@ -33,11 +33,17 @@ module Admin
           WithdrawService.new(@withdraw).complete!
         end
         redirect_to :back, notice: 'Withdraw successfully updated!'
+      rescue WithdrawService::Error => e
+        flash[:alert] = e.message
+        redirect_to :back
       end
 
       def destroy
         WithdrawService.new(@withdraw).reject!
         redirect_to :back, notice: 'Withdraw successfully destroyed!'
+      rescue WithdrawService::Error => e
+        flash[:alert] = e.message
+        redirect_to :back
       end
     end
   end
