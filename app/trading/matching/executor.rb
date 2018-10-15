@@ -61,12 +61,6 @@ module Matching
 
         validate!
 
-        accounts_table = Account
-          .lock
-          .select(:id, :member_id, :currency_id, :balance, :locked)
-          .where(member_id: [@ask.member_id, @bid.member_id].uniq, currency_id: [@market.ask_unit, @market.bid_unit])
-          .each_with_object({}) { |record, memo| memo["#{record.currency_id}:#{record.member_id}"] = record }
-
         @trade = Trade.new \
           ask:           @ask,
           ask_member_id: @ask.member_id,
@@ -78,11 +72,17 @@ module Matching
           market:        @market,
           trend:         _trend
 
-        binding.pry
+        Ordering.new(@ask).complete(@trade)
+        Ordering.new(@bid).complete(@trade)
+
+        accounts_table = Account
+          .lock
+          .select(:id, :member_id, :currency_id, :balance, :locked)
+          .where(member_id: [@ask.member_id, @bid.member_id].uniq, currency_id: [@market.ask_unit, @market.bid_unit])
+          .each_with_object({}) { |record, memo| memo["#{record.currency_id}:#{record.member_id}"] = record }
+
         strike(@trade, @ask, accounts_table["#{@ask.ask}:#{@ask.member_id}"], accounts_table["#{@ask.bid}:#{@ask.member_id}"])
-        binding.pry
         strike(@trade, @bid, accounts_table["#{@bid.bid}:#{@bid.member_id}"], accounts_table["#{@bid.ask}:#{@bid.member_id}"])
-        binding.pry
 
         ([@ask, @bid] + accounts_table.values).map do |record|
           table     = record.class.arel_table
@@ -143,24 +143,15 @@ module Matching
         message: message
     end
 
+    def strike_fees(trade)
+
+    end
+
     def strike(trade, order, outcome_account, income_account)
       outcome_value, income_value = OrderAsk === order ? [trade.volume, trade.funds] : [trade.funds, trade.volume]
 
-      # fee_service = Peatio::FeeService.on_complete(:order, order, trade)
-      # fee_service.submit!
-      # order.fees << fee_service.fees
-      Peatio::FeeService.new(order.fees).complete!
-
-      outcome_account.reload
-      income_account.reload
-
-      # binding.pry
       outcome_account.assign_attributes outcome_account.attributes_after_unlock_and_sub_funds!(outcome_value)
       income_account.assign_attributes income_account.attributes_after_plus_funds!(income_value)
-
-      # binding.pry
-      # outcome_account.save
-      # income_account.save
 
       order.volume         -= trade.volume
       order.locked         -= outcome_value

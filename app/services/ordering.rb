@@ -19,6 +19,10 @@ class Ordering
     true
   end
 
+  def complete(trade)
+    @orders.each {|order| do_complete(order, trade)}
+  end
+
   def cancel
     @orders.each(&method(:do_cancel))
   end
@@ -37,11 +41,24 @@ private
     fee_service = Peatio::FeeService.on_submit(:order, order)
     # Append fees to parent order.
     order.fees << fee_service.fees
-    # Submit fees (lock_funds).
-    fee_service.submit!
+    # Submit all fees for order (lock_funds).
+    Peatio::FeeService.new(order.fees).submit!
 
     order.save!
     order.hold_account!.lock_funds!(order.locked)
+  end
+
+  def do_complete(order, trade)
+    order.with_lock do
+      # Get fee service for order cancel action.
+      fee_service = Peatio::FeeService.on_complete(:order, order, trade)
+      # Append fees to parent order.
+      order.fees << fee_service.fees
+      # Submit new fees (lock_funds!).
+      fee_service.submit!
+      # Complete all fees for order (unlock_and_sub_funds!, plus_funds!).
+      Peatio::FeeService.new(order.fees).complete!
+    end
   end
 
   def do_cancel(order)

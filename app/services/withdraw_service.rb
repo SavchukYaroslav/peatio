@@ -21,7 +21,7 @@ class WithdrawService
       fee_service = Peatio::FeeService.on_submit(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
       withdraw.save!
-      fee_service.submit!
+      Peatio::FeeService.new(withdraw.fees).submit!
       withdraw.submit!
     end
   # TODO: Beautiful exceptions handling.
