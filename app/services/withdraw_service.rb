@@ -18,13 +18,9 @@ class WithdrawService
 
   def submit!
     ActiveRecord::Base.transaction do
-      binding.pry
-      # We save withdraw and fees in single transaction.
       fee_service = Peatio::FeeService.on_submit(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      binding.pry
       withdraw.save!
-      binding.pry
       fee_service.submit!
       withdraw.submit!
     end
@@ -35,13 +31,9 @@ class WithdrawService
 
   def complete!
     ActiveRecord::Base.transaction do
-      binding.pry
-      # We save withdraw and fees in single transaction.
       fee_service = Peatio::FeeService.on_complete(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      binding.pry
       withdraw.save!
-      binding.pry
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
       withdraw.success!
@@ -53,13 +45,9 @@ class WithdrawService
 
   def cancel!
     ActiveRecord::Base.transaction do
-      binding.pry
-      # We save withdraw and fees in single transaction.
       fee_service = Peatio::FeeService.on_cancel(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      binding.pry
       withdraw.save!
-      binding.pry
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
       withdraw.cancel!
@@ -71,13 +59,9 @@ class WithdrawService
 
   def reject!
     ActiveRecord::Base.transaction do
-      binding.pry
-      # We save withdraw and fees in single transaction.
       fee_service = Peatio::FeeService.on_cancel(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
-      binding.pry
       withdraw.save!
-      binding.pry
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
       withdraw.reject!

@@ -49,19 +49,14 @@ module APIv2
       present orders, with: APIv2::Entities::Order
     end
 
-    # desc 'Create a Sell/Buy order.', scopes: %w(trade)
-    # params do
-    #   use :market, :order
-    #   optional :fees, type: Array
-    # end
-    # post "/orders" do
-    #   order = create_order params
-    #   binding.pry
-    #   params[:fees].each do |fee|
-    #     Fee.create(fee.merge(fee_chargeable: order))
-    #   end
-    #   present order, with: APIv2::Entities::Order
-    # end
+    desc 'Create a Sell/Buy order.', scopes: %w(trade)
+    params do
+      use :market, :order
+    end
+    post "/orders" do
+      order = create_order params
+      present order, with: APIv2::Entities::Order
+    end
 
     desc 'Cancel an order.', scopes: %w(trade)
     params do

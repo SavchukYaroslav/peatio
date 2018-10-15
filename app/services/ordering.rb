@@ -32,6 +32,9 @@ private
   def do_submit(order)
     order.fix_number_precision # number must be fixed before computing locked
     order.locked = order.origin_locked = order.compute_locked
+    fee_service = Peatio::FeeService.on_submit(:order, order)
+    order.fees << fee_service.fees
+    fee_service.submit!
     order.save!
     order.hold_account!.lock_funds!(order.locked)
   end
@@ -43,6 +46,9 @@ private
   def do_cancel!(order)
     order.with_lock do
       return unless order.state == Order::WAIT
+      fee_service = Peatio::FeeService.on_cancel(:order, order)
+      fee_service.submit!
+      Peatio::FeeService.new(order.fees).complete!
       order.hold_account!.unlock_funds!(order.locked)
       order.update!(state: Order::CANCEL)
     end

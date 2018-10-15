@@ -27,6 +27,7 @@ class Order < ActiveRecord::Base
   scope :done, -> { with_state(:done) }
   scope :active, -> { with_state(:wait) }
 
+  # TODO: Remove fee from Order model.
   before_validation(on: :create) { self.fee = config.public_send("#{kind}_fee") }
 
   after_commit on: :create do
