@@ -36,7 +36,6 @@ module Admin
       end
 
       def destroy
-        binding.pry
         WithdrawService.new(@withdraw).reject!
         redirect_to :back, notice: 'Withdraw successfully destroyed!'
       end

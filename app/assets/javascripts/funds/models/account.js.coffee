@@ -10,8 +10,6 @@ class Account extends PeatioModel.Model
     Deposit.findAllBy('currency', @currency)
 
   withdraws: ->
-    console.log('All withdrawals')
-    console.log(Withdraw.all())
     Withdraw.findAllBy('currency_id', @currency)
 
   topDeposits: ->

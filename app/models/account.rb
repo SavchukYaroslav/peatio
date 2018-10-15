@@ -39,7 +39,7 @@ class Account < ActiveRecord::Base
   end
 
   def withdraws
-    Withdraw.where(currency_id: currency_id, member_id: member_id)
+    @withdraws ||= Withdraw.where(currency_id: currency_id, member_id: member_id)
   end
 
   def plus_funds!(amount)

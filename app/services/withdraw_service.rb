@@ -24,7 +24,6 @@ class WithdrawService
       Peatio::FeeService.new(withdraw.fees).submit!
       withdraw.submit!
     end
-  # TODO: Beautiful exceptions handling.
   rescue StandardError => e
     raise Error, e.message
   end
@@ -38,7 +37,6 @@ class WithdrawService
       Peatio::FeeService.new(withdraw.fees).complete!
       withdraw.success!
     end
-      # TODO: Beautiful exceptions handling.
   rescue StandardError => e
     raise Error, e.message
   end
@@ -52,7 +50,6 @@ class WithdrawService
       Peatio::FeeService.new(withdraw.fees).complete!
       withdraw.cancel!
     end
-      # TODO: Beautiful exceptions handling.
   rescue StandardError => e
     raise Error, e.message
   end
@@ -66,7 +63,6 @@ class WithdrawService
       Peatio::FeeService.new(withdraw.fees).complete!
       withdraw.reject!
     end
-      # TODO: Beautiful exceptions handling.
   rescue StandardError => e
     raise Error, e.message
   end

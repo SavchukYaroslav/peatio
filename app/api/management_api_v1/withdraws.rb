@@ -98,9 +98,9 @@ module ManagementAPIv1
         rid:            params[:rid]
 
       WithdrawService.new(withdraw).submit!
-        perform_action(withdraw, params[:action]) if params[:action]
-        present withdraw, with: ManagementAPIv1::Entities::Withdraw
-    rescue WithdrawService
+      perform_action(withdraw, params[:action]) if params[:action]
+      present withdraw, with: ManagementAPIv1::Entities::Withdraw
+    rescue WithdrawService::Error
       body errors: withdraw.errors.full_messages
       status 422
     end

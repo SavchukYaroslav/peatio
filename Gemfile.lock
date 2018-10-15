@@ -9,8 +9,9 @@ GIT
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
 
-PATH
-  remote: ../peatio-takerfee
+GIT
+  remote: https://github.com/ysv/peatio-fee_service-takerfee
+  revision: 81c642546c403280e9b9f00e213d18df3839321e
   specs:
     peatio-fee_service-takerfee (0.1.0)
       method-not-implemented (~> 1.0.1)

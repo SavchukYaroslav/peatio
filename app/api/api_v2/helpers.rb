@@ -29,7 +29,6 @@ module APIv2
 
     def current_user
       # JWT authentication provides member email.
-      return Member.first
       if env.key?('api_v2.authentic_member_email')
         Member.find_by_email(env['api_v2.authentic_member_email'])
       end

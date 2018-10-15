@@ -3,7 +3,8 @@
 
 class Ordering
 
-  class CancelOrderError < StandardError; end
+  Error            = Class.new(StandardError)
+  CancelOrderError = Class.new(Error)
 
   def initialize(order_or_orders)
     @orders = Array(order_or_orders)
@@ -44,8 +45,8 @@ private
     # Submit all fees for order (lock_funds).
     Peatio::FeeService.new(order.fees).submit!
 
-    order.save!
     order.hold_account!.lock_funds!(order.locked)
+    order.save!
   end
 
   def do_complete(order, trade)
@@ -57,12 +58,10 @@ private
       # Submit new fees (lock_funds!).
       fee_service.submit!
       # Complete all fees for order (unlock_and_sub_funds!, plus_funds!).
-      Peatio::FeeService.new(order.fees).complete!
-    end
-  end
 
-  def do_cancel(order)
-    AMQPQueue.enqueue(:matching, action: 'cancel', order: order.to_matching_attributes)
+      Peatio::FeeService.new(order.fees).complete!
+      order.save!
+    end
   end
 
   def do_cancel!(order)
@@ -73,13 +72,18 @@ private
       fee_service = Peatio::FeeService.on_cancel(:order, order)
       # Append fees to parent order.
       order.fees << fee_service.fees
-      # Submit fees (lock_funds!).
+      # Submit new fees (lock_funds!).
       fee_service.submit!
-      # Complete fees (unlock_and_sub_funds!, plus_funds!).
+      # Complete all fees for order (unlock_and_sub_funds!, plus_funds!).
       Peatio::FeeService.new(order.fees).complete!
 
       order.hold_account!.unlock_funds!(order.locked)
-      order.update!(state: Order::CANCEL)
+      order.state = Order::CANCEL
+      order.save!
     end
+  end
+
+  def do_cancel(order)
+    AMQPQueue.enqueue(:matching, action: 'cancel', order: order.to_matching_attributes)
   end
 end
