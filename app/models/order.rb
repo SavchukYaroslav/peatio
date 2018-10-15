@@ -28,7 +28,7 @@ class Order < ActiveRecord::Base
   scope :active, -> { with_state(:wait) }
 
   # TODO: Remove fee from Order model.
-  before_validation(on: :create) { self.fee = config.public_send("#{kind}_fee") }
+  before_validation(on: :create) { self.fee = 0 }
 
   after_commit on: :create do
     next unless ord_type == 'limit'
