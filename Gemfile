@@ -59,12 +59,6 @@ gem 'digest-sha3', '~> 1.1.0'
 gem 'scout_apm', '~> 2.4', require: false
 gem 'peatio', '~> 0.4.2'
 
-# Load Gemfile with plugins.
-Dir.glob File.expand_path('../Gemfile.plugin', __FILE__) do |file|
-  eval_gemfile file
-end
-
-
 group :development, :test do
   gem 'faker',        '~> 1.8'
   gem 'pry-byebug',   '~> 3.6'
@@ -85,4 +79,9 @@ group :test do
   gem 'mocha',               '~> 1.4', require: false
   gem 'factory_bot_rails',   '~> 4.8'
   gem 'timecop',             '~> 0.9'
+end
+
+# Load gems from Gemfile.plugin.
+Dir.glob File.expand_path('../Gemfile.plugin', __FILE__) do |file|
+  eval_gemfile file
 end

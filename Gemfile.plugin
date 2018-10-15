@@ -2,6 +2,4 @@ source 'https://rubygems.org'
 git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 
 # Add your plugins here.
-gem 'peatio-fee_service-takerfee', path: '/Users/yaroslavsavchuk/Developer/rubykube/peatio-takerfee'
-#
-# gem 'kek'
+gem 'peatio-fee_service-takerfee', github: 'ysv/peatio-fee_service-takerfee'
