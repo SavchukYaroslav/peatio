@@ -2,7 +2,21 @@
 # frozen_string_literal: true
 
 class WithdrawService
-  Error = Class.new(StandardError)
+  class Error < StandardError
+    attr_reader :action, :wrapped_exception
+
+    def initialize(action:, ex:)
+      @action = action
+      @wrapped_exception = ex
+      super "Can't #{action} withdrawal. Reason: #{wrapped_exception.message}"
+    end
+  end
+
+  class ChangeStateError < StandardError
+    def initialize(state)
+      super "Update withdraw state to #{state}ed failed."
+    end
+  end
 
   attr_accessor :withdraw
 
@@ -11,53 +25,66 @@ class WithdrawService
   end
 
   def submit!
+    action = :submit
+    validate_action!(action)
     ActiveRecord::Base.transaction do
-      raise Error, 'Can\'t submit withdrawal' unless withdraw.submit
       fee_service = Peatio::FeeService.on_submit(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
       Peatio::FeeService.new(withdraw.fees).submit!
+      withdraw.public_send(action)
       withdraw.save!
     end
   rescue StandardError => e
-    raise Error, e.message
+    raise Error, action: action, ex: e
   end
 
   def complete!
+    action = :success
+    validate_action!(action)
     ActiveRecord::Base.transaction do
-      raise Error, 'Can\'t complete withdrawal' unless withdraw.success
       fee_service = Peatio::FeeService.on_complete(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
+      withdraw.public_send(action)
       withdraw.save!
     end
   rescue StandardError => e
-    raise Error, e.message
+    raise Error, action: :complete, ex: e
   end
 
   def cancel!
+    action = :cancel
+    validate_action!(action)
     ActiveRecord::Base.transaction do
-      raise Error, 'Can\'t cancel withdrawal' unless withdraw.cancel
       fee_service = Peatio::FeeService.on_cancel(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
+      withdraw.public_send(action)
       withdraw.save!
     end
   rescue StandardError => e
-    raise Error, e.message
+    raise Error, action: action, ex: e
   end
 
   def reject!
+    action = :reject
+    validate_action!(action)
     ActiveRecord::Base.transaction do
-      raise Error, 'Can\'t cancel withdrawal' unless withdraw.reject
       fee_service = Peatio::FeeService.on_cancel(:withdraw, withdraw)
       withdraw.fees << fee_service.fees
       fee_service.submit!
       Peatio::FeeService.new(withdraw.fees).complete!
+      withdraw.public_send(action)
       withdraw.save!
     end
   rescue StandardError => e
-    raise Error, e.message
+    raise Error, action: action, ex: e
+  end
+
+  private
+  def validate_action!(action)
+    raise ChangeStateError, action unless withdraw.public_send("may_#{action}?")
   end
 end
