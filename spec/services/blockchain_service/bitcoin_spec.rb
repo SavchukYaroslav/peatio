@@ -136,7 +136,6 @@ describe BlockchainService::Bitcoin do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: btc_account,
             aasm_state: :confirming,
             currency: currency
           withdrawals << create(:btc_withdraw, withdrawal_hash)

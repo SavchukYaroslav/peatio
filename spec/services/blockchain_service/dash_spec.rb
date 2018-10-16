@@ -148,7 +148,6 @@ describe BlockchainService::Dash do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: dash_account,
             aasm_state: :confirming,
             currency: currency
           withdrawals << create(:dash_withdraw, withdrawal_hash)

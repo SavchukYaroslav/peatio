@@ -131,7 +131,6 @@ describe BlockchainService::Litecoin do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: ltc_account,
             aasm_state: :confirming,
             currency: currency
           withdrawals << create(:ltc_withdraw, withdrawal_hash)

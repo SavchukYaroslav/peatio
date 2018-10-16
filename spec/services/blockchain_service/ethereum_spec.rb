@@ -215,7 +215,6 @@ describe BlockchainService::Ethereum do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: eth_account,
             aasm_state: :confirming,
             currency: currency
           withdrawals << create(:eth_withdraw, withdrawal_hash)

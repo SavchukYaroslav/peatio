@@ -62,7 +62,6 @@ describe BlockchainService::Ripple do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawals << create(:xrp_withdraw, withdrawal_hash.merge(
                                                  member: member,
-                                                 account: xrp_account,
                                                  aasm_state: :confirming,
                                                  currency: currency
                                                ))
