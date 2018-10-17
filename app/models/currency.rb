@@ -146,7 +146,7 @@ class Currency < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180808144704
+# Schema version: 20181017114624
 #
 # Table name: currencies
 #
