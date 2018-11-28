@@ -3,7 +3,9 @@
 
 
 class Currency < ActiveRecord::Base
-  serialize :options, JSON
+
+  OPTIONS_ATTRIBUTES = %i[erc20_contract_address].freeze
+  store :options, accessors: OPTIONS_ATTRIBUTES, coder: JSON
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
 
@@ -88,9 +90,9 @@ class Currency < ActiveRecord::Base
   types.each { |t| define_method("#{t}?") { type == t.to_s } }
 
   def as_json(*)
-    { code:                     code,
-      coin:                     coin?,
-      fiat:                     fiat? }
+    { code: code,
+      coin: coin?,
+      fiat: fiat? }
   end
 
   def summary
@@ -103,21 +105,6 @@ class Currency < ActiveRecord::Base
       coinable: coin?,
       hot:      coin? ? balance : nil }
   end
-
-  class << self
-    def nested_attr(*names)
-      names.each do |name|
-        name_string = name.to_s
-        define_method(name)              { options[name_string] }
-        define_method(name_string + '?') { options[name_string].present? }
-        define_method(name_string + '=') { |value| options[name_string] = value }
-        define_method(name_string + '!') { options.fetch!(name_string) }
-      end
-    end
-  end
-
-  nested_attr \
-    :erc20_contract_address
 
   def disabled?
     !enabled
@@ -145,8 +132,7 @@ class Currency < ActiveRecord::Base
 
   attr_readonly :id,
                 :code,
-                :type,
-                :erc20_contract_address
+                :type
 end
 
 # == Schema Information
