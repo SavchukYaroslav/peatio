@@ -9,6 +9,13 @@ GIT
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
 
+GIT
+  remote: https://github.com/ysv/peatio-plugin-example
+  revision: d14de44573924ccfd9cdadcb178cbf7758876de3
+  branch: plugin-api-v2
+  specs:
+    peatio-plugin-example (0.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -461,6 +468,7 @@ DEPENDENCIES
   omniauth-google-oauth2 (~> 0.5.3)
   passgen (~> 1.0.2)
   peatio (~> 0.4.3)
+  peatio-plugin-example (~> 0.2.0)!
   pry-byebug (~> 3.6)
   puma (~> 3.11.4)
   quiet_assets (~> 1.1)

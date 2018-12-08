@@ -1,4 +1,6 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 
+gem 'peatio-plugin-example', '~> 0.2.0', github: 'ysv/peatio-plugin-example', branch: 'plugin-api-v2'
+
 # List your plugins here.
