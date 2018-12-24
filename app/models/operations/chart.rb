@@ -10,14 +10,14 @@ module Operations
         kind:           :main,
         currency_type:  :fiat,
         description:    'Main Fiat Assets Account',
-        scope:          %i[member]
+        scope:          %i[platform]
       },
       { code:           102,
         type:           :asset,
         kind:           :main,
         currency_type:  :coin,
         description:    'Main Crypto Assets Account',
-        scope:          %i[member]
+        scope:          %i[platform]
       },
       { code:           201,
         type:           :liability,
@@ -45,6 +45,13 @@ module Operations
         kind:           :locked,
         currency_type:  :coin,
         description:    'Locked Crypto Liabilities Account',
+        scope:          %i[member]
+      },
+      { code:           292,
+        type:           :liability,
+        kind:           'token-distribution',
+        currency_type:  :coin,
+        description:    'Crypto Liabilities Account for token distribution',
         scope:          %i[member]
       },
       { code:           301,
@@ -79,6 +86,10 @@ module Operations
 
     class << self
       def code_for(options)
+        entry_for(options).fetch(:code)
+      end
+
+      def entry_for(options)
         # We use #as_json to stringify hash values.
         # {type: 'asset'}.as_json == {type: :asset}.as_json #=> true
         CHART
@@ -88,7 +99,6 @@ module Operations
               raise StandardError, "Account for #{options} doesn't exists."\
             end
           end
-          .fetch(:code)
       end
 
       def find_chart(code)
