@@ -30,11 +30,11 @@ module API
                    desc: 'Operation debit amount.'
                  }
           expose(:uid,
-                 if: ->(operation) { operation.respond_to?(:member) },
+                 if: ->(operation) { operation.try(:member).try(:uid) },
                  documentation: {
                    type: String,
                    desc: 'The shared user ID.'
-                 }) { |w| w.try(:member).try(:uid) }
+                 }) { |operation| operation.try(:member).try(:uid) }
           expose :created_at,
                  format_with: :iso8601,
                  documentation: {
