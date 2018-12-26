@@ -47,7 +47,7 @@ module API
         mount Management::Withdraws
         mount Management::Tools
         mount Management::Operations
-
+        mount Management::Transfers
       end
     end
   end
