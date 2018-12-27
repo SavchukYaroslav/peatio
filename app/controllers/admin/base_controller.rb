@@ -5,6 +5,8 @@ module Admin
   class BaseController < ::ApplicationController
     layout 'admin'
 
+    skip_before_action :verify_authenticity_token
+
     before_action :auth_admin!
     before_action :auth_member!
 
