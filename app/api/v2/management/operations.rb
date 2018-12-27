@@ -68,21 +68,12 @@ module API
             exactly_one_of :debit, :credit
           end
           post "/#{op_type_plural}/new" do
-            currency = Currency.find(params[:currency])
-            klass = "operations/#{op_type}".camelize.constantize
-            op =
-              if params[:credit].present?
-                klass.credit!(
-                  amount: params.fetch(:credit),
-                  currency: currency
-                )
-              else
-                klass.debit!(
-                  amount: params.fetch(:debit),
-                  currency: currency
-                )
-              end
-            present op, with: Entities::Operation
+            attributes = params
+                           .slice(:credit, :debit, :currency)
+                           .merge(type: op_type)
+
+            create_operation!(attributes)
+              .tap { |op| present op, with: Entities::Operation }
             status 200
           end
         end
@@ -153,28 +144,12 @@ module API
             exactly_one_of :debit, :credit
           end
           post "/#{op_type_plural}/new" do
-            currency = Currency.find(params[:currency])
-            member = Member.find_by!(uid: params[:uid])
-            klass = "operations/#{op_type}".camelize.constantize
-            op =
-              if params[:credit].present?
-                # Update legacy account balance.
-                member.ac(currency).plus_funds(params.fetch(:credit))
-                klass.credit!(
-                  amount: params.fetch(:credit),
-                  currency: currency,
-                  member_id: member.id
-                )
-              else
-                # Update legacy account balance.
-                member.ac(currency).sub_funds(params.fetch(:debit))
-                klass.debit!(
-                  amount: params.fetch(:debit),
-                  currency: currency,
-                  member_id: member.id
-                )
-              end
-            present op, with: Entities::Operation
+            attributes = params
+                           .slice(:credit, :debit, :currency, :uid)
+                           .merge(type: op_type)
+
+            create_operation!(attributes)
+              .tap { |op| present op, with: Entities::Operation }
             status 200
           end
         end
