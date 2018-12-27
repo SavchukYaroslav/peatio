@@ -13,9 +13,9 @@ module API
           requires :key,
                    type: Integer,
                    desc: 'Unique Transfer Key.'
-          requires :type,
+          requires :kind,
                    type: String,
-                   desc: 'Transfer Type.'
+                   desc: 'Transfer Kind.'
           requires :desc,
                    type: String,
                    desc: 'Transfer Description.'
