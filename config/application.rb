@@ -59,5 +59,8 @@ module Peatio
     #   lib/aasm/locking.rb => AASM::Locking
     # We disable eager load here since lib contains lot of stuff which is not required for typical app functions.
     config.paths.add 'lib', eager_load: false, autoload: true
+
+    config.middleware.delete ActionDispatch::Cookies
+    config.middleware.delete ActionDispatch::Session::CookieStore
   end
 end
