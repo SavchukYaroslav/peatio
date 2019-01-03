@@ -20,38 +20,44 @@ class Operation < ActiveRecord::Base
       name.demodulize.downcase.to_sym
     end
 
-    def credit!(amount:, kind: :main, reference: nil, currency: nil)
+    def credit!(amount:, currency:, kind: :main, **opt)
       return if amount.zero?
 
-      currency ||= reference.currency
-      account_code = Operations::Chart.code_for(
+      opt[:code] ||= Operations::Chart.code_for(
         type:          operation_type,
         kind:          kind,
         currency_type: currency.type.to_sym
       )
-      create!(
+      {
         credit:      amount,
-        reference:   reference,
-        currency_id: currency.id,
-        code:        account_code
-      ).tap(&:save!)
+        currency_id: currency.id
+      }.merge(opt).yield_self { |attr| new(attr) }.tap(&:save!)
     end
 
-    def debit!(amount:, kind: :main, reference: nil, currency: nil)
+    def debit!(amount:, currency:, kind: :main, **opt)
       return if amount.zero?
 
-      currency ||= reference.currency
-      account_code = Operations::Chart.code_for(
+      opt[:code] ||= Operations::Chart.code_for(
         type:          operation_type,
         kind:          kind,
-        currency_type: currency.type
+        currency_type: currency.type.to_sym
       )
-      new(
-        debit:       amount,
-        reference:   reference,
-        currency_id: currency.id,
-        code:        account_code
-      ).tap(&:save!)
+      {
+        debit:        amount,
+        currency_id:  currency.id
+      }.merge(opt).yield_self { |attr| new(attr) }.tap(&:save!)
+    end
+
+    def transfer!(amount:, from_kind:, to_kind:, currency:, **opt)
+      params = {
+        amount: amount,
+        currency: currency,
+      }.merge(opt)
+
+      [
+        debit!(params.merge(kind: from_kind)),
+        credit!(params.merge(kind: to_kind))
+      ]
     end
 
     def balance(currency: nil, created_at_from: nil, created_at_to: nil)

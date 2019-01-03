@@ -6,55 +6,56 @@ module Operations
     belongs_to :member
 
     class << self
-      def credit!(amount:, kind: :main, reference: nil,
-                  member_id: nil, currency: nil)
-        return if amount.zero?
-
-        currency ||= reference.currency
-        account_code = Operations::Chart.code_for(
-          type:          operation_type,
-          kind:          kind,
-          currency_type: currency.type
-        )
-        new(
-          credit:      amount,
-          reference:   reference,
-          currency_id: currency.id,
-          code:        account_code,
-          member_id:   member_id || reference.member_id
-        ).tap(&:save!)
-      end
+      # def credit!(amount:, kind: :main, reference: nil,
+      #             member_id: nil, currency: nil)
+      #   return if amount.zero?
+      #
+      #   currency ||= reference.currency
+      #   account_code = Operations::Chart.code_for(
+      #     type:          operation_type,
+      #     kind:          kind,
+      #     currency_type: currency.type
+      #   )
+      #   new(
+      #     credit:      amount,
+      #     reference:   reference,
+      #     currency_id: currency.id,
+      #     code:        account_code,
+      #     member_id:   member_id || reference.member_id
+      #   ).tap(&:save!)
+      # end
 
       # TODO: Validate member balance before debit.
-      def debit!(amount:, kind: :main, reference: nil,
-                 member_id: nil, currency: nil)
-        return if amount.zero?
-
-        currency ||= reference.currency
-        account_code = Operations::Chart.code_for(
-          type:          operation_type,
-          kind:          kind,
-          currency_type: currency.type
-        )
-        create!(
-          debit:       amount,
-          reference:   reference,
-          currency_id: currency.id,
-          code:        account_code,
-          member_id:   member_id || reference.member_id
-        ).tap(&:save!)
-      end
-
-      def transfer!(amount:, from_kind:, to_kind:,
-                    reference: nil, member_id: nil, currency: nil)
-        params = {
-          reference: reference,
-          amount: amount,
-          member_id: member_id,
-          currency: currency
-        }
-        [debit!(params.merge(kind: from_kind)), credit!(params.merge(kind: to_kind))]
-      end
+      # def debit!(amount:, kind: :main, reference: nil,
+      #            member_id: nil, currency: nil)
+      #   return if amount.zero?
+      #
+      #   currency ||= reference.currency
+      #   account_code = Operations::Chart.code_for(
+      #     type:          operation_type,
+      #     kind:          kind,
+      #     currency_type: currency.type
+      #   )
+      #   new(
+      #     debit:       amount,
+      #     reference:   reference,
+      #     currency_id: currency.id,
+      #     code:        account_code,
+      #     member_id:   member_id || reference.member_id
+      #   ).tap(&:save!)
+      # end
+      #
+      # def transfer!(amount:, from_kind:, to_kind:, currency:, **opt)
+      #   params = {
+      #     amount: amount,
+      #     currency: currency,
+      #   }.merge(opt)
+      #
+      #   [
+      #     debit!(params.merge(kind: from_kind)),
+      #     credit!(params.merge(kind: to_kind))
+      #   ]
+      # end
     end
   end
 end

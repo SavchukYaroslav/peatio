@@ -54,6 +54,7 @@ describe 'Accounting' do
   let(:expense_balance) { Operations::Expense.balance }
 
   before do
+    binding.pry
     deposit_btc.accept!
     deposit_usd.accept!
 
@@ -67,6 +68,7 @@ describe 'Accounting' do
   end
 
   it 'assert that asset - liabilities = revenue - expense' do
+    binding.pry
     expect(asset_balance.merge(liability_balance){ |k, a, b| a - b}).to eq (revenue_balance.merge(expense_balance){ |k, a, b| a - b})
   end
 
