@@ -69,9 +69,7 @@ module API
             exactly_one_of :debit, :credit
           end
           post "/#{op_type_plural}/new" do
-            attributes = params
-                           .slice(:credit, :debit, :currency)
-                           .merge(type: op_type)
+            attributes = declared(params).merge(type: op_type)
 
             create_operation!(attributes).tap do |op|
               present op, with: Entities::Operation
@@ -147,9 +145,7 @@ module API
             exactly_one_of :debit, :credit
           end
           post "/#{op_type_plural}/new" do
-            attributes = params
-                           .slice(:credit, :debit, :currency, :uid)
-                           .merge(type: op_type)
+            attributes = declared(params).merge(type: op_type)
 
             create_operation!(attributes).tap do |op|
               present op, with: Entities::Operation

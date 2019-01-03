@@ -26,12 +26,12 @@ class Operation < ActiveRecord::Base
       opt[:code] ||= Operations::Chart.code_for(
         type:          operation_type,
         kind:          kind,
-        currency_type: currency.type.to_sym
+        currency_type: currency.type
       )
-      {
-        credit:      amount,
-        currency_id: currency.id
-      }.merge(opt).yield_self { |attr| new(attr) }.tap(&:save!)
+
+      opt.merge(credit: amount, currency_id: currency.id)
+         .yield_self { |attr| new(attr) }
+         .tap(&:save!)
     end
 
     def debit!(amount:, currency:, kind: :main, **opt)
@@ -40,19 +40,16 @@ class Operation < ActiveRecord::Base
       opt[:code] ||= Operations::Chart.code_for(
         type:          operation_type,
         kind:          kind,
-        currency_type: currency.type.to_sym
+        currency_type: currency.type
       )
-      {
-        debit:        amount,
-        currency_id:  currency.id
-      }.merge(opt).yield_self { |attr| new(attr) }.tap(&:save!)
+
+      opt.merge(debit: amount, currency_id: currency.id)
+         .yield_self { |attr| new(attr) }
+         .tap(&:save!)
     end
 
-    def transfer!(amount:, from_kind:, to_kind:, currency:, **opt)
-      params = {
-        amount: amount,
-        currency: currency,
-      }.merge(opt)
+    def transfer!(amount:, currency:, from_kind:, to_kind:, **opt)
+      params = opt.merge(amount: amount, currency: currency)
 
       [
         debit!(params.merge(kind: from_kind)),

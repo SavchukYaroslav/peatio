@@ -7,7 +7,7 @@ module API
       module Helpers
         def create_operation!(attributes)
           if attributes.fetch(:type).in Operation::MEMBER_TYPES \
-            && attributes.present?(:uid)
+            && attributes[:uid].present?
             create_member_operation!(attributes)
           else
             create_platform_operation!(attributes)
@@ -21,10 +21,14 @@ module API
         end
 
         def create_member_operation!(attributes)
+          member = Member.find_by!(uid: attributes.fetch(:uid))
+
           op =
             if params[:credit].present?
+              amount = params.fetch(:credit)
               # Update legacy account balance.
-              member.ac(currency).plus_funds(params.fetch(:credit))
+              member.ac(currency).plus_funds(amount)
+              attributes.slice(:currency, :code, :kind)
               klass.credit!(
                 amount: params.fetch(:credit),
                 currency: currency,
