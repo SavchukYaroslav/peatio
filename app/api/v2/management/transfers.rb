@@ -57,7 +57,6 @@ module API
         end
         post '/transfers/new' do
           declared_params = declared(params)
-          binding.pry
           declared_params
           # currency = Currency.find(params.fetch(:currency))
           #

@@ -39,7 +39,6 @@ class Deposit < ActiveRecord::Base
       transitions from: :submitted, to: :accepted
       after do
         plus_funds
-        binding.pry
         record_complete_operations!
       end
     end
@@ -114,10 +113,9 @@ class Deposit < ActiveRecord::Base
         reference: self,
       )
 
-      binding.pry
       # Credit main fiat/crypto Liability account.
       Operations::Liability.credit!(
-        amount: fee,
+        amount: amount,
         currency: currency,
         reference: self,
         member_id: member_id
