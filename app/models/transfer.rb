@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 class Transfer < ActiveRecord::Base
-  self.inheritance_column = false
 end
 
 # == Schema Information
