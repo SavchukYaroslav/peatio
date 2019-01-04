@@ -14,8 +14,8 @@ module API
           check_request_method!
           check_query_parameters!
           check_content_type!
-          # payload = check_jwt!(jwt)
-          # env['rack.input'] = StringIO.new(payload.fetch(:data, {}).to_json)
+          payload = check_jwt!(jwt)
+          env['rack.input'] = StringIO.new(payload.fetch(:data, {}).to_json)
         end
 
       private

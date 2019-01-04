@@ -73,4 +73,8 @@ class Operation < ActiveRecord::Base
       end
     end
   end
+
+  def chart
+    Operations::Chart.find_chart(code).yield_self { |ch| OpenStruct.new(ch) }
+  end
 end
