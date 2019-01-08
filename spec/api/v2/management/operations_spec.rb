@@ -143,7 +143,8 @@ describe API::V2::Management::Operations, type: :request do
         let(:currency) { Currency.coins.sample }
         let(:signers) { %i[alex jeff] }
         let(:data) do
-          { currency: currency.code }
+          { currency: currency.code,
+            code:     Operations::Chart.code_for(type: op_type, currency_type: currency.type)}
         end
 
         context 'credit' do
@@ -211,7 +212,8 @@ describe API::V2::Management::Operations, type: :request do
         let(:member) { create(:member, :barong) }
         let(:data) do
           { currency: currency.code,
-            uid: member.uid }
+            code:     Operations::Chart.code_for(type: op_type, currency_type: currency.type),
+            uid:      member.uid }
         end
 
         context 'credit' do

@@ -32,8 +32,9 @@ module Operations
         CHART.select { |entry| entry.merge(options).as_json == entry.as_json }
       end
 
-      def codes
-        CHART.map { |entry| entry.fetch(:code) }
+      def codes(options={})
+        select_accounts_by(options)
+          .map { |entry| entry.fetch(:code) }
       end
     end
   end

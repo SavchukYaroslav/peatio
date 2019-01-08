@@ -58,10 +58,10 @@ module API
                      type: String,
                      values: -> { ::Currency.codes(bothcase: true) },
                      desc: 'The currency code.'
-            # requires :code,
-            #          type: Integer,
-            #          values: -> { ::Operations::Chart.select_accounts_by(type: op_type) },
-            #          desc: 'Operation account code'
+            requires :code,
+                     type: Integer,
+                     values: -> { ::Operations::Chart.codes(type: op_type) },
+                     desc: 'Operation account code'
             optional :debit,
                      type: BigDecimal,
                      values: ->(v) { v.to_d.positive? },
@@ -135,6 +135,10 @@ module API
                      type: String,
                      values: -> { ::Currency.codes(bothcase: true) },
                      desc: 'The currency code.'
+            requires :code,
+                     type: Integer,
+                     values: -> { ::Operations::Chart.codes(type: op_type) },
+                     desc: 'Operation account code'
             optional :uid,
                      type: String,
                      desc: 'The user ID for operation owner.'

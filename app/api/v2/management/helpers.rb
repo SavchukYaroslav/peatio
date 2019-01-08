@@ -25,12 +25,12 @@ module API
 
           if attrs[:credit].present?
             klass.credit!(amount: attrs.fetch(:credit),
-                          currency: currency,
-                          **attrs.slice(:kind, :code))
+                          code: attrs.fetch(:code),
+                          currency: currency)
           elsif attrs[:debit].present?
             klass.debit!(amount: attrs.fetch(:debit),
-                         currency: currency,
-                         **attrs.slice(:kind, :code))
+                         code: attrs.fetch(:code),
+                         currency: currency)
           end
         end
 
@@ -47,8 +47,8 @@ module API
 
             op = klass.credit!(amount: amount,
                                member_id: member.id,
-                               currency: currency,
-                               **attrs.slice(:kind, :code))
+                               code: attrs.fetch(:code),
+                               currency: currency)
 
             credit_legacy_balance!(amount: amount,
                                    member: member,
@@ -60,8 +60,8 @@ module API
 
             op = klass.debit!(amount: amount,
                               member_id: member.id,
-                              currency: currency,
-                              **attrs.slice(:kind, :code))
+                              code: attrs.fetch(:code),
+                              currency: currency)
 
             debit_legacy_balance!(amount: amount,
                                   member: member,
