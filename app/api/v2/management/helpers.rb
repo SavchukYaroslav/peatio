@@ -53,7 +53,7 @@ module API
             credit_legacy_balance!(amount: amount,
                                    member: member,
                                    currency: currency,
-                                   kind: op.chart.kind)
+                                   kind: op.account.kind)
             op
           elsif attrs[:debit].present?
             amount = attrs.fetch(:debit)
@@ -66,14 +66,14 @@ module API
             debit_legacy_balance!(amount: amount,
                                   member: member,
                                   currency: currency,
-                                  kind: op.chart.kind)
+                                  kind: op.account.kind)
             op
           end
         end
 
         # @deprecated
         def credit_legacy_balance!(amount:, member:, currency:, kind:)
-          kind ||= ::Operations::Chart.find_chart(code)[:kind]
+          kind ||= ::Operations::Chart.find_account_by(code: code).fetch(:kind)
 
           if kind.to_s == 'main'
             member.ac(currency).plus_funds(amount)

@@ -8,6 +8,11 @@ class Operation < ActiveRecord::Base
   belongs_to :currency, foreign_key: :currency_id
 
   validates :credit, :debit, numericality: { greater_than_or_equal_to: 0 }
+  validate do
+    unless account.currency_type == currency.type
+      errors.add(:currency, 'type and account currency type don\'t match')
+    end
+  end
 
   self.abstract_class = true
 
@@ -74,7 +79,8 @@ class Operation < ActiveRecord::Base
     end
   end
 
-  def chart
-    Operations::Chart.find_chart(code).yield_self { |ch| OpenStruct.new(ch) }
+  def account
+    Operations::Chart.find_account_by(code: code)
+                     .yield_self { |ch| OpenStruct.new(ch) }
   end
 end

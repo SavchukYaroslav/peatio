@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
         month: I18n.t('chart.month'),
         year: I18n.t('chart.year')
       },
-      chart: {
+      account: {
         price: I18n.t('chart.price'),
         volume: I18n.t('chart.volume'),
         open: I18n.t('chart.open'),

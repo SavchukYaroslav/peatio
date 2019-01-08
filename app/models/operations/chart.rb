@@ -2,16 +2,19 @@
 # frozen_string_literal: true
 
 # TODO: Move it to ActiveRecord model.
+# TODO: Add validations:
+#         * Code by numbers.
+#         * Account type and currency type.
 module Operations
   class Chart
     CHART = Rails.configuration.x.chart_of_accounts
 
     class << self
       def code_for(options)
-        entry_for(options).fetch(:code)
+        find_account_by(options).fetch(:code)
       end
 
-      def entry_for(options)
+      def find_account_by(options)
         # We use #as_json to stringify hash values.
         # {type: 'asset'}.as_json == {type: :asset}.as_json #=> true
         CHART
@@ -23,8 +26,10 @@ module Operations
           end
       end
 
-      def find_chart(code)
-        CHART.find { |entry| entry.fetch(:code) == code }
+      def select_accounts_by(options)
+        # We use #as_json to stringify hash values.
+        # {type: 'asset'}.as_json == {type: :asset}.as_json #=> true
+        CHART.select { |entry| entry.merge(options).as_json == entry.as_json }
       end
 
       def codes
