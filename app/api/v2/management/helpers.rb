@@ -18,55 +18,68 @@ module API
 
         def create_platform_operation!(attrs)
           currency = Currency.find(attrs.fetch(:currency))
-          klass = attrs.delete(:type)
-                       .yield_self { |type| "operations/#{type}" }
-                       .camelize
-                       .constantize
+          klass = ::Operations::Chart
+                    .find_account_by(code: attrs.fetch(:code))
+                    .fetch(:type)
+                    .yield_self { |type| "operations/#{type}" }
+                    .camelize
+                    .constantize
 
           if attrs[:credit].present?
             klass.credit!(amount: attrs.fetch(:credit),
+                          currency: currency,
                           code: attrs.fetch(:code),
-                          currency: currency)
+                          reference: attrs[:reference])
           elsif attrs[:debit].present?
             klass.debit!(amount: attrs.fetch(:debit),
+                         currency: currency,
                          code: attrs.fetch(:code),
-                         currency: currency)
+                         reference: attrs[:reference])
           end
         end
 
         def create_member_operation!(attrs)
           member = Member.find_by!(uid: attrs.fetch(:uid))
           currency = Currency.find(attrs.fetch(:currency))
-          klass = attrs.delete(:type)
-                       .yield_self { |type| "operations/#{type}" }
-                       .camelize
-                       .constantize
+          klass = ::Operations::Chart
+                    .find_account_by(code: attrs.fetch(:code))
+                    .fetch(:type)
+                    .yield_self { |type| "operations/#{type}" }
+                    .camelize
+                    .constantize
 
           if attrs[:credit].present?
             amount = attrs.fetch(:credit)
-            op = klass.credit!(amount: amount,
-                               member_id: member.id,
-                               code: attrs.fetch(:code),
-                               currency: currency)
 
-            credit_legacy_balance!(amount: amount,
-                                   member: member,
-                                   currency: currency,
-                                   kind: op.account.kind)
-            op
+            ActiveRecord::Base.transaction do
+              op = klass.credit!(amount: amount,
+                                 currency: currency,
+                                 code: attrs.fetch(:code),
+                                 member_id: member.id,
+                                 reference: attrs[:reference])
+
+              credit_legacy_balance!(amount: amount,
+                                     member: member,
+                                     currency: currency,
+                                     kind: op.account.kind)
+              op
+            end
           elsif attrs[:debit].present?
             amount = attrs.fetch(:debit)
 
-            op = klass.debit!(amount: amount,
-                              member_id: member.id,
-                              code: attrs.fetch(:code),
-                              currency: currency)
+            ActiveRecord::Base.transaction do
+              op = klass.debit!(amount: amount,
+                                currency: currency,
+                                code: attrs.fetch(:code),
+                                member_id: member.id,
+                                reference: attrs[:reference])
 
-            debit_legacy_balance!(amount: amount,
-                                  member: member,
-                                  currency: currency,
-                                  kind: op.account.kind)
-            op
+              debit_legacy_balance!(amount: amount,
+                                    member: member,
+                                    currency: currency,
+                                    kind: op.account.kind)
+              op
+            end
           end
         end
 

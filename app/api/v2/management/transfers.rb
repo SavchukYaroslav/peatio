@@ -16,8 +16,9 @@ module API
           requires :kind,
                    type: String,
                    desc: 'Transfer Kind.'
-          requires :desc,
+          optional :desc,
                    type: String,
+                   default: '',
                    desc: 'Transfer Description.'
 
           requires(:operations, type: Array) do
@@ -57,38 +58,24 @@ module API
         end
         post '/transfers/new' do
           declared_params = declared(params)
-          declared_params
-          # currency = Currency.find(params.fetch(:currency))
-          #
-          # from_account_entry = Operations::Chart.entry_for(params.slice(:type, :kind).merge(currency_type: currency.type))
-          # to_account_entry = Operations::Chart.entry_for(params.slice(:type, :kind).merge(currency_type: currency.type))
-          #
-          # from_member =
-          #   if :member.in?(from_account_entry[:scope])
-          #     # TODO: Move this validation to params block.
-          #     from_uid = params.fetch(:from_uid) do
-          #       raise Grape::Exceptions::Validation, params: :from_uid, message: 'must be present.'
-          #     end
-          #     Member.find_by!(uid: from_uid)
-          #   end
-          # to_member =
-          #   if :member.in?(to_account_entry[:scope])
-          #     # TODO: Move this validation to params block.
-          #     to_uid = params.fetch(:to_uid) do
-          #       raise Grape::Exceptions::Validation, params: :to_uid, message: 'must be present.'
-          #     end
-          #     Member.find_by!(uid: to_uid)
-          #   end
-          #
-          # options = {
-          #   currency_id: params[:currency],
-          #   amount: params[:amount],
-          #   from_code: from_account_entry[:code],
-          #   to_code: to_account_entry[:code],
-          #   from_member: from_member,
-          #   to_member: to_member
-          # }.compact
-          # OpenStruct(options)
+          Transfer.transaction do
+            transfer = Transfer.create!(declared_params.slice(:key, :kind, :desc))
+            declared_params[:operations].map do |pair|
+              attrs = { currency: pair[:currency],
+                        debit: pair[:amount],
+                        code: pair[:account_src][:code],
+                        uid: pair[:account_src][:uid]}
+              create_operation!(attrs.merge(reference: transfer))
+              attrs = { currency: pair[:currency],
+                        credit: pair[:amount],
+                        code: pair[:account_dst][:code],
+                        uid: pair[:account_dst][:uid]}
+              create_operation!(attrs.merge(reference: transfer))
+            end
+          end
+          present Transfer.find_by(key: declared_params[:key]),
+                  with: Entities::Transfer
+          status 200
         end
       end
     end

@@ -73,7 +73,7 @@ module API
             exactly_one_of :debit, :credit
           end
           post "/#{op_type_plural}/new" do
-            attributes = declared(params).merge(type: op_type)
+            attributes = declared(params)
 
             create_operation!(attributes).tap do |op|
               present op, with: Entities::Operation
@@ -155,7 +155,7 @@ module API
             exactly_one_of :debit, :credit
           end
           post "/#{op_type_plural}/new" do
-            attributes = declared(params).merge(type: op_type)
+            attributes = declared(params)
 
             create_operation!(attributes).tap do |op|
               present op, with: Entities::Operation
