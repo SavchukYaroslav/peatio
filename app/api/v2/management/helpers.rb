@@ -6,8 +6,8 @@ module API
     module Management
       module Helpers
         def create_operation!(attrs)
-          if attrs.fetch(:type).in?(Operation::MEMBER_TYPES) \
-            && attrs[:uid].present?
+          account = ::Operations::Chart.find_account_by(code: attrs.fetch(:code))
+          if 'member' == account.fetch(:scope)
             create_member_operation!(attrs)
           else
             create_platform_operation!(attrs)
@@ -19,9 +19,9 @@ module API
         def create_platform_operation!(attrs)
           currency = Currency.find(attrs.fetch(:currency))
           klass = attrs.delete(:type)
-                      .yield_self { |type| "operations/#{type}" }
-                      .camelize
-                      .constantize
+                       .yield_self { |type| "operations/#{type}" }
+                       .camelize
+                       .constantize
 
           if attrs[:credit].present?
             klass.credit!(amount: attrs.fetch(:credit),
@@ -38,13 +38,12 @@ module API
           member = Member.find_by!(uid: attrs.fetch(:uid))
           currency = Currency.find(attrs.fetch(:currency))
           klass = attrs.delete(:type)
-                      .yield_self { |type| "operations/#{type}" }
-                      .camelize
-                      .constantize
+                       .yield_self { |type| "operations/#{type}" }
+                       .camelize
+                       .constantize
 
           if attrs[:credit].present?
             amount = attrs.fetch(:credit)
-
             op = klass.credit!(amount: amount,
                                member_id: member.id,
                                code: attrs.fetch(:code),

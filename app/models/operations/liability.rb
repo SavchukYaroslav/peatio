@@ -3,7 +3,7 @@
 module Operations
   # {Liability} is a balance sheet operation
   class Liability < Operation
-    belongs_to :member
+    belongs_to :member, required: true
   end
 end
 

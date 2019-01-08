@@ -139,9 +139,11 @@ module API
                      type: Integer,
                      values: -> { ::Operations::Chart.codes(type: op_type) },
                      desc: 'Operation account code'
-            optional :uid,
-                     type: String,
-                     desc: 'The user ID for operation owner.'
+            given code: ->(code) { ::Operations::Chart.find_account_by(code: code).fetch(:scope) == 'member' } do
+              requires :uid,
+                       type: String,
+                       desc: 'The user ID for operation owner.'
+            end
             optional :debit,
                      type: BigDecimal,
                      values: ->(v) { v.to_d.positive? },

@@ -5,6 +5,8 @@
 # TODO: Add validations:
 #         * Code by numbers.
 #         * Account type and currency type.
+# TODO: Add member? platform? to Operations::Account
+# and simplify #find_account_by usage.
 module Operations
   class Chart
     CHART = Rails.configuration.x.chart_of_accounts
