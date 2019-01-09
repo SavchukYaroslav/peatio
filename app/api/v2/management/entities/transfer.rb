@@ -47,5 +47,4 @@ end
 #  index_transfers_on_key   (key) UNIQUE
 #  index_transfers_on_kind  (kind)
 #
-
 #
