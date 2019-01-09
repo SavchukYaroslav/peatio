@@ -28,6 +28,7 @@ module API
           ::Operation::TYPES.map(&:pluralize).each do |op_t|
             expose op_t,
                    using: Operation,
+                   if: ->(transfer) { transfer.send(op_t).present? },
                    documentation: {
                      desc: "Transfer #{op_t}"
                    }
