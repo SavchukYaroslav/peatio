@@ -57,23 +57,29 @@ module API
         end
         post '/transfers/new' do
           declared_params = declared(params)
+
           Transfer.transaction do
             transfer = Transfer.create!(declared_params.slice(:key, :kind, :desc))
             declared_params[:operations].map do |pair|
-              attrs = { currency: pair[:currency],
-                        debit: pair[:amount],
-                        code: pair[:account_src][:code],
-                        uid: pair[:account_src][:uid]}
-              create_operation!(attrs.merge(reference: transfer))
-              attrs = { currency: pair[:currency],
-                        credit: pair[:amount],
-                        code: pair[:account_dst][:code],
-                        uid: pair[:account_dst][:uid]}
-              create_operation!(attrs.merge(reference: transfer))
+              shared_params = { currency: pair[:currency],
+                                reference: transfer }
+
+              debit_params = pair[:account_src]
+                               .merge(debit: pair[:amount])
+                               .merge(shared_params)
+                               .compact
+
+
+              credit_params = pair[:account_dst]
+                               .merge(credit: pair[:amount])
+                               .merge(shared_params)
+                               .compact
+
+              create_operation!(debit_params)
+              create_operation!(credit_params)
             end
           end
-          present Transfer.find_by(key: declared_params[:key])
-                          .includes(:assets, :expenses, :liabilities, :revenues),
+          present Transfer.find_by(key: declared_params[:key]),
                   with: Entities::Transfer
           status 200
         end
