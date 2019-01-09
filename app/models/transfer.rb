@@ -3,9 +3,9 @@
 
 class Transfer < ActiveRecord::Base
   # Define has_many relation with Operations::{Asset,Expense,Liability,Revenue}.
-  %i[assets expenses liabilities revenues].each do |op|
-    has_many op,
-             class_name: "::Operations::#{op.to_s.singularize.camelize}",
+  ::Operation::TYPES.map(&:pluralize).each do |op_t|
+    has_many op_t.to_sym,
+             class_name: "::Operations::#{op_t.to_s.singularize.camelize}",
              as: :reference
   end
 end

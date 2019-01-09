@@ -23,6 +23,15 @@ module API
                    type: String,
                    desc: 'Transfer Description'
                  }
+
+          # Expose assets, expenses, liabilities, revenues.
+          ::Operation::TYPES.map(&:pluralize).each do |op_t|
+            expose op_t,
+                   using: Operation,
+                   documentation: {
+                     desc: "Transfer #{op_t}"
+                   }
+          end
         end
       end
     end

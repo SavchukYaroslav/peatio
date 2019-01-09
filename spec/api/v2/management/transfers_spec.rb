@@ -51,7 +51,6 @@ describe API::V2::Management::Transfers, type: :request do
         it { expect(response).to have_http_status 200 }
 
         it 'returns operation' do
-          binding.pry
           # expect(JSON.parse(response.body)['currency']).to eq currency.code.to_s
           # expect(JSON.parse(response.body)['credit'].to_d).to eq amount
           # expect(JSON.parse(response.body)['code']).to \

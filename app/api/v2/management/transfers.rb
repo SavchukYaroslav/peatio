@@ -18,7 +18,6 @@ module API
                    desc: 'Transfer Kind.'
           optional :desc,
                    type: String,
-                   default: '',
                    desc: 'Transfer Description.'
 
           requires(:operations, type: Array) do
@@ -73,7 +72,8 @@ module API
               create_operation!(attrs.merge(reference: transfer))
             end
           end
-          present Transfer.find_by(key: declared_params[:key]),
+          present Transfer.find_by(key: declared_params[:key])
+                          .includes(:assets, :expenses, :liabilities, :revenues),
                   with: Entities::Transfer
           status 200
         end

@@ -15,9 +15,14 @@ FactoryBot.define do
     desc { "#{kind} for #{Time.now.to_date}" }
 
     trait :with_operations do
-      # TODO: Add Transfer with operations.
+      after(:create) do |t|
+        create_list(:asset, 2, reference: t)
+      end
     end
+
+    factory :transfer_with_operations, traits: %i[with_operations]
   end
+
 end
 
 
