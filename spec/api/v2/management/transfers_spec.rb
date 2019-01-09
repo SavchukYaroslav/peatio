@@ -19,21 +19,98 @@ describe API::V2::Management::Transfers, type: :request do
     let(:currency) { Currency.coins.sample }
     let(:signers) { %i[alex jeff] }
     let(:data) do
-      { key:  42,
-        kind: 'referral-payoff',
-        desc: "Referral program payoffs (#{Time.now.to_date})" }
+      { key:  generate(:transfer_key),
+        kind: generate(:transfer_kind),
+        desc: "Referral program payoffs (#{Time.now.to_date})",
+        operations: operations}
+    end
+    let(:valid_operation) do
+      { currency: :btc,
+        amount:   0.0001,
+        account_src: {
+          code: 102
+        },
+        account_dst: {
+          code: 102,
+        }
+      }
+    end
+
+    context 'empty key' do
+      let(:operations) {[valid_operation]}
+
+      before do
+        data.delete(:key)
+        request
+      end
+
+      it { expect(response).to have_http_status(422) }
+      it { expect(response.body).to match(/key is missing/i) }
+    end
+
+    context 'empty kind' do
+      let(:operations) {[valid_operation]}
+
+      before do
+        data.delete(:kind)
+        request
+      end
+
+      it { expect(response).to have_http_status(422) }
+      it { expect(response.body).to match(/kind is missing/i) }
+    end
+
+    context 'empty desc' do
+      let(:operations) {[valid_operation]}
+
+      before do
+        data.delete(:desc)
+        request
+      end
+
+      it { expect(response).to have_http_status(200) }
     end
 
     context 'empty operations' do
       let(:operations) {[]}
 
-      before do
-        data[:operations] = operations
-        request
-      end
+      before { request }
 
       it { expect(response).to have_http_status(422) }
       it { expect(response.body).to match(/operations is empty/i) }
+    end
+
+    context 'invalid account code' do
+      let(:operations) do
+        valid_operation[:account_src][:code] = 999
+        [valid_operation]
+      end
+      before { request }
+
+      it { expect(response).to have_http_status(422) }
+      it { expect(response.body).to match(/does not have a valid value/i) }
+    end
+
+    context 'invalid currency' do
+      let(:operations) do
+        valid_operation[:currency] = :neo
+        [valid_operation]
+      end
+      before { request }
+
+      it { expect(response).to have_http_status(422) }
+      it { expect(response.body).to match(/does not have a valid value/i) }
+    end
+
+    context 'invalid amount' do
+      let(:operations) do
+        valid_operation[:amount] = -1
+        [valid_operation]
+      end
+      before { request }
+
+      it { expect(response).to have_http_status(422) }
+      it { expect(response.body).to match(/does not have a valid value/i) }
     end
 
     context 'credit' do
@@ -55,15 +132,12 @@ describe API::V2::Management::Transfers, type: :request do
           }
         ]
       end
-      before do
-        data[:operations] = operations
-        request
-      end
+      before { request }
 
       it { expect(response).to have_http_status 200 }
 
       it 'returns operation' do
-        binding.pry
+        # binding.pry
         # expect(JSON.parse(response.body)['currency']).to eq currency.code.to_s
         # expect(JSON.parse(response.body)['credit'].to_d).to eq amount
         # expect(JSON.parse(response.body)['code']).to \

@@ -35,7 +35,7 @@ module API
                        type: Integer,
                        values: -> { ::Operations::Chart.codes },
                        desc: 'Source Account code.'
-              given code: ->(code) { ::Operations::Chart.find_account_by(code: code).fetch(:scope) == 'member' } do
+              given code: ->(code) { ::Operations::Chart.find_account_by(code: code).try(:fetch, :scope).to_s == 'member' } do
                 requires :uid,
                          type: String,
                          desc: 'Source Account User ID (for accounts with member scope).'
@@ -47,7 +47,7 @@ module API
                        type: Integer,
                        values: -> { ::Operations::Chart.codes },
                        desc: 'Destination Account code.'
-              given code: ->(code) { ::Operations::Chart.find_account_by(code: code).fetch(:scope) == 'member' } do
+              given code: ->(code) { ::Operations::Chart.find_account_by(code: code).try(:fetch, :scope).to_s == 'member' } do
                 requires :uid,
                          type: String,
                          desc: 'Destination Account User ID (for accounts with member scope).'

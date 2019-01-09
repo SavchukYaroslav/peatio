@@ -19,13 +19,7 @@ module Operations
       def find_account_by(options)
         # We use #as_json to stringify hash values.
         # {type: 'asset'}.as_json == {type: :asset}.as_json #=> true
-        CHART
-          .find { |entry| entry.merge(options).as_json == entry.as_json }
-          .tap do |entry|
-            if entry.blank?
-              raise StandardError, "Account for #{options} doesn't exists."\
-            end
-          end
+        CHART.find { |entry| entry.merge(options).as_json == entry.as_json }
       end
 
       def select_accounts_by(options)
