@@ -20,7 +20,7 @@ module API
                    type: String,
                    desc: 'Transfer Description.'
 
-          requires(:operations, type: Array) do
+          requires(:operations, type: Array, allow_blank: false) do
             requires :currency,
                      type: String,
                      values: -> { Currency.codes(bothcase: true) },
