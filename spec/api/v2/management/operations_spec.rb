@@ -172,6 +172,15 @@ describe API::V2::Management::Operations, type: :request do
             expect { request(op_type.to_s.pluralize) }.to \
               change(op_klass, :count).by(1)
           end
+
+          context 'wrong account code' do
+            before do
+              data[:code] = (::Operations::Chart.codes - [data[:code]]).sample
+              request(op_type.to_s.pluralize)
+            end
+
+            it { expect(response).to have_http_status 422 }
+          end
         end
 
         context 'debit' do
@@ -247,6 +256,15 @@ describe API::V2::Management::Operations, type: :request do
             currency_id = JSON.parse(response.body)['currency']
             expect(member.ac(currency_id).balance).to \
               eq JSON.parse(response.body)['credit'].to_d
+          end
+
+          context 'wrong account code' do
+            before do
+              data[:code] = (::Operations::Chart.codes - [data[:code]]).sample
+              request(op_type.to_s.pluralize)
+            end
+
+            it { expect(response).to have_http_status 422 }
           end
         end
 

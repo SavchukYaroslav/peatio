@@ -161,6 +161,9 @@ module API
               present op, with: Entities::Operation
             end
             status 200
+          rescue ActiveRecord::RecordInvalid => e
+            body errors: e.message
+            status 422
           end
         end
       end

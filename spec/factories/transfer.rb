@@ -3,7 +3,7 @@
 
 FactoryBot.define do
   sequence :transfer_key do
-    Faker::Number.number(5).to_i
+    Faker::Number.unique.number(5).to_i
   end
   sequence :transfer_kind do |n|
     %w[referral-payoff token-distribution member-transfer].sample + "-#{n}"
