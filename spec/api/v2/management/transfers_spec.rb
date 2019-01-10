@@ -127,9 +127,17 @@ describe API::V2::Management::Transfers, type: :request do
     end
 
     context 'referral program story' do
-      # In case of referral program some revenues owned by platform
-      # are returned to the referrer once per 4h for example.
+      # In case of referral program some fees received by platform
+      # during trading are returned to the referrer once per 4h for example.
       # We debit Revenue account balance and credit member Liabilities.
+
+      before do
+        # Credit Revenue accounts.
+        create(:revenue, currency_id: base_unit,
+               code: coin_liabilities_code, credit: 10)
+        create(:revenue, currency_id: quote_unit,
+               code: fiat_liabilities_code, credit: 100)
+      end
 
       let(:referrer1) { create(:member, :barong) }
       let(:referrer2) { create(:member, :barong) }
@@ -293,6 +301,76 @@ describe API::V2::Management::Transfers, type: :request do
         it 'doesn\'t save revenues' do
           expect { request }.to_not change(::Operations::Revenue, :count)
         end
+      end
+    end
+
+    context 'token distribution story' do
+      before do
+        Rails.configuration.x.chart_of_accounts << coin_distribution_account
+      end
+      # In token distribution story we credit member token balance
+      # once member is signed in for the first time.
+      before do
+        #   1. Credit main Assets account.
+        #   2. Credit token-distribution Liabilities account.
+        # So we keep Balance Sheet equal Income Statement.
+        binding.pry
+        create(:asset, currency_id: coin,
+               code: coin_liabilities_code, credit: 1000)
+        create(:liability, currency_id: coin,
+               code: coin_distribution_account_code, credit: 1000)
+      end
+
+      let(:member1) { create(:member, :barong) }
+      let(:member2) { create(:member, :barong) }
+
+      let(:coin) { :trst }
+
+      let(:coin_liabilities_code) { 202 }
+      let(:coin_distribution_account_code) do
+        coin_distribution_account[:code]
+      end
+      let(:coin_distribution_account) do
+        { code:           292,
+          type:           :liability,
+          kind:           'token-distribution',
+          currency_type:  :coin,
+          description:    'Token Distributions Liabilities Account',
+          scope:          :platform
+        }
+      end
+
+      let(:operations) do
+        [
+          {
+            currency: coin,
+            amount:   10,
+            account_src: {
+              code: coin_distribution_account_code
+            },
+            account_dst: {
+              code: coin_liabilities_code,
+              uid: member1.uid
+            }
+          },
+          {
+            currency: coin,
+            amount:   5,
+            account_src: {
+              code: coin_distribution_account_code
+            },
+            account_dst: {
+              code: coin_liabilities_code,
+              uid: member2.uid
+            }
+          }
+        ]
+      end
+
+      it do
+        request
+        binding.pry
+        expect(response).to have_http_status 200
       end
     end
   end

@@ -3,19 +3,19 @@
 module Operations
   # {Liability} is a balance sheet operation
   class Liability < Operation
-    belongs_to :member, required: true
+    belongs_to :member
   end
 end
 
 # == Schema Information
-# Schema version: 20181210162905
+# Schema version: 20190110164859
 #
 # Table name: liabilities
 #
 #  id             :integer          not null, primary key
 #  code           :integer          not null
 #  currency_id    :string(255)      not null
-#  member_id      :integer          not null
+#  member_id      :integer
 #  reference_id   :integer
 #  reference_type :string(255)
 #  debit          :decimal(32, 16)  default(0.0), not null

@@ -9,7 +9,7 @@ class Operation < ActiveRecord::Base
 
   validates :credit, :debit, numericality: { greater_than_or_equal_to: 0 }
   validate do
-    unless account.currency_type == currency.type
+    unless account.currency_type.to_s == currency.type.to_s
       errors.add(:currency, 'type and account currency type don\'t match')
     end
   end

@@ -7,7 +7,7 @@ module API
       module Helpers
         def create_operation!(attrs)
           account = ::Operations::Chart.find_account_by(code: attrs.fetch(:code))
-          if 'member' == account.fetch(:scope)
+          if 'member' == account.fetch(:scope).to_s
             create_member_operation!(attrs)
           else
             create_platform_operation!(attrs)
