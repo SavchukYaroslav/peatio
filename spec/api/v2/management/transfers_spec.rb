@@ -22,8 +22,9 @@ describe API::V2::Management::Transfers, type: :request do
       { key:  generate(:transfer_key),
         kind: generate(:transfer_kind),
         desc: "Referral program payoffs (#{Time.now.to_date})",
-        operations: operations}
+        operations: operations }
     end
+
     let(:valid_operation) do
       { currency: :btc,
         amount:   0.0001,
@@ -31,7 +32,7 @@ describe API::V2::Management::Transfers, type: :request do
           code: 102
         },
         account_dst: {
-          code: 102,
+          code: 102
         }
       }
     end
@@ -113,46 +114,186 @@ describe API::V2::Management::Transfers, type: :request do
       it { expect(response.body).to match(/does not have a valid value/i) }
     end
 
-    context 'credit' do
-      let(:dst_member) { create(:member, :barong) }
+    context 'existing transfer key' do
+      let(:operations) {[valid_operation]}
+      before do
+        t = create(:transfer)
+        data[:key] = t.key
+        request
+      end
 
-      # TODO: Remove hardcode from operations.
+      it { expect(response).to have_http_status 422 }
+      it { expect(response.body).to match(/key has already been taken/i) }
+    end
+
+    context 'referral program story' do
+      # In case of referral program some revenues owned by platform
+      # are returned to the referrer once per 4h for example.
+      # We debit Revenue account balance and credit member Liabilities.
+
+      let(:referrer1) { create(:member, :barong) }
+      let(:referrer2) { create(:member, :barong) }
+      let(:referrer3) { create(:member, :barong) }
+
+      let(:base_unit) { Currency.coins.ids.sample }
+      let(:quote_unit) { Currency.fiats.ids.sample }
+
+      let(:coin_liabilities_code) { 202 }
+      let(:fiat_liabilities_code) { 201 }
+
+      let(:coin_revenues_code) { 302 }
+      let(:fiat_revenues_code) { 301 }
+
+      # Consider we have BTC/USD market
+      # Return all BTC/USD fees for 4h in single batch.
+      # Balance changes:
+      # Liability:
+      #   referrer1:
+      #     base_unit:  0.0001 + 0.0003
+      #     quote_unit: 0
+      #   referrer2:
+      #     base_unit:  0.00015
+      #     quote_unit: 0.05
+      #   referrer3:
+      #     base_unit:  0
+      #     quote_unit: 0.075
+      # Revenue:
+      #   base_unit: -(0.0001 + 0.0003 + 0.00015)
+      #   quote_unit -(0.05 + 0.075)
       let(:operations) do
         [
           {
-            currency: :btc,
+            currency: base_unit,
             amount:   0.0001,
             account_src: {
-              code: 302
+              code: coin_revenues_code
             },
             account_dst: {
-              code: 202,
-              uid: dst_member.uid
+              code: coin_liabilities_code,
+              uid: referrer1.uid
+            }
+          },
+          {
+            currency: base_unit,
+            amount:   0.00015,
+            account_src: {
+              code: coin_revenues_code
+            },
+            account_dst: {
+              code: coin_liabilities_code,
+              uid: referrer2.uid
+            }
+          },
+          {
+            currency: base_unit,
+            amount:   0.0003,
+            account_src: {
+              code: coin_revenues_code
+            },
+            account_dst: {
+              code: coin_liabilities_code,
+              uid: referrer1.uid
+            }
+          },
+          {
+            currency: quote_unit,
+            amount:   0.075,
+            account_src: {
+              code: fiat_revenues_code
+            },
+            account_dst: {
+              code: fiat_liabilities_code,
+              uid: referrer3.uid
+            }
+          },
+          {
+            currency: quote_unit,
+            amount:   0.05,
+            account_src: {
+              code: fiat_revenues_code
+            },
+            account_dst: {
+              code: fiat_liabilities_code,
+              uid: referrer2.uid
             }
           }
         ]
       end
-      before { request }
 
-      it { expect(response).to have_http_status 200 }
-
-      it 'returns operation' do
-        # binding.pry
-        # expect(JSON.parse(response.body)['currency']).to eq currency.code.to_s
-        # expect(JSON.parse(response.body)['credit'].to_d).to eq amount
-        # expect(JSON.parse(response.body)['code']).to \
-        #   eq Operations::Chart.code_for(type: op_type,
-        #                                 kind: :main,
-        #                                 currency_type: currency.type)
+      it do
+        request
+        expect(response).to have_http_status 200
       end
 
-      # it 'saves operation' do
-      #   op_klass = "operations/#{op_type}"
-      #                .camelize
-      #                .constantize
-      #   expect { request }.to \
-      #     change(op_klass, :count).by(1)
-      # end
+      it 'returns transfer with operations' do
+        request
+        expect(JSON.parse(response.body)['key']).to eq data[:key]
+        expect(JSON.parse(response.body)['kind']).to eq data[:kind]
+        expect(JSON.parse(response.body)['desc']).to eq data[:desc]
+        expect(JSON.parse(response.body)['liabilities'].size).to eq operations.size
+        expect(JSON.parse(response.body)['revenues'].size).to eq operations.size
+      end
+
+      it 'saves liabilities' do
+        expect { request }.to change(::Operations::Liability, :count).by(operations.size)
+      end
+
+      it 'saves revenues' do
+        expect { request }.to change(::Operations::Revenue, :count).by(operations.size)
+      end
+
+      it 'updates legacy balance' do
+        expect { request }.to change{ referrer1.ac(base_unit).balance }.by(0.0001 + 0.0003).and \
+                              change{ referrer2.ac(base_unit).balance }.by(0.00015).and \
+                              change{ referrer2.ac(quote_unit).balance }.by(0.05).and \
+                              change{ referrer3.ac(quote_unit).balance }.by(0.075)
+      end
+
+      context 'wrong account code' do
+        let(:operations) do
+          [
+            {
+              currency: base_unit,
+              amount:   0.0001,
+              account_src: {
+                code: fiat_revenues_code  # Wrong code because base_unit is coin.
+              },
+              account_dst: {
+                code: coin_liabilities_code,
+                uid: referrer2.uid
+              }
+            },
+            {
+              currency: quote_unit,
+              amount:   0.05,
+              account_src: {
+                code: fiat_revenues_code
+              },
+              account_dst: {
+                code: coin_liabilities_code, # Wrong code because quote_unit is fiat.
+                uid: referrer2.uid
+              }
+            }
+          ]
+        end
+
+        it do
+          request
+          expect(response).to have_http_status 422
+        end
+
+        it 'doesn\'t save transfer' do
+          expect { request }.to_not change(Transfer, :count)
+        end
+
+        it 'doesn\'t save liabilities' do
+          expect { request }.to_not change(::Operations::Liability, :count)
+        end
+
+        it 'doesn\'t save revenues' do
+          expect { request }.to_not change(::Operations::Revenue, :count)
+        end
+      end
     end
   end
 end
