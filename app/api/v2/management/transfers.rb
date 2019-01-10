@@ -79,9 +79,13 @@ module API
               create_operation!(credit_params)
             end
           end
-          present Transfer.find_by(key: declared_params[:key]),
+
+          present Transfer.find_by!(key: declared_params[:key]),
                   with: Entities::Transfer
           status 200
+        rescue ActiveRecord::RecordInvalid => e
+          body errors: e.message
+          status 422
         end
       end
     end

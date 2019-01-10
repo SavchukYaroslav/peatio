@@ -8,6 +8,9 @@ class Transfer < ActiveRecord::Base
              class_name: "::Operations::#{op_t.to_s.singularize.camelize}",
              as: :reference
   end
+
+  validates :key, uniqueness: true, presence: true
+  validates :kind, presence: true
 end
 
 # == Schema Information
