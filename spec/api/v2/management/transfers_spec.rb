@@ -250,7 +250,7 @@ describe API::V2::Management::Transfers, type: :request do
         expect { request }.to change(::Operations::Revenue, :count).by(operations.size)
       end
 
-      it 'updates legacy balance' do
+      it 'updates legacy balances' do
         expect { request }.to change{ referrer1.ac(base_unit).balance }.by(0.0001 + 0.0003).and \
                               change{ referrer2.ac(base_unit).balance }.by(0.00015).and \
                               change{ referrer2.ac(quote_unit).balance }.by(0.05).and \
@@ -305,16 +305,17 @@ describe API::V2::Management::Transfers, type: :request do
     end
 
     context 'token distribution story' do
-      before do
-        Rails.configuration.x.chart_of_accounts << coin_distribution_account
-      end
       # In token distribution story we credit member token balance
       # once member is signed in for the first time.
+      before do
+        # Add token-distribution Liabilities account.
+        Rails.configuration.x.chart_of_accounts << coin_distribution_account
+      end
+
       before do
         #   1. Credit main Assets account.
         #   2. Credit token-distribution Liabilities account.
         # So we keep Balance Sheet equal Income Statement.
-        binding.pry
         create(:asset, currency_id: coin,
                code: coin_liabilities_code, credit: 1000)
         create(:liability, currency_id: coin,
@@ -340,6 +341,14 @@ describe API::V2::Management::Transfers, type: :request do
         }
       end
 
+      # Balance changes:
+      # Liability-main:
+      #   member1:
+      #     coin:  10
+      #   member2:
+      #     coin:  5
+      # Liability-token-distribution:
+      #   coin: -15
       let(:operations) do
         [
           {
@@ -369,8 +378,25 @@ describe API::V2::Management::Transfers, type: :request do
 
       it do
         request
-        binding.pry
         expect(response).to have_http_status 200
+      end
+
+      it 'returns transfer with liabilities' do
+        request
+        expect(JSON.parse(response.body)['key']).to eq data[:key]
+        expect(JSON.parse(response.body)['kind']).to eq data[:kind]
+        expect(JSON.parse(response.body)['desc']).to eq data[:desc]
+        # Two liability operation for each token-distribution operation.
+        expect(JSON.parse(response.body)['liabilities'].size).to eq operations.size * 2
+      end
+
+      it 'saves liabilities' do
+        expect { request }.to change(::Operations::Liability, :count).by(operations.size * 2)
+      end
+
+      it 'updates legacy balance' do
+        expect { request }.to change{ member1.ac(coin).balance }.by(10).and \
+                              change{ member2.ac(coin).balance }.by(5)
       end
     end
   end
