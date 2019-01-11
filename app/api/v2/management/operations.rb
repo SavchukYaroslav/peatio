@@ -79,6 +79,9 @@ module API
               present op, with: Entities::Operation
             end
             status 200
+          rescue ActiveRecord::RecordInvalid => e
+            body errors: e.message
+            status 422
           end
         end
 
@@ -139,7 +142,7 @@ module API
                      type: Integer,
                      values: -> { ::Operations::Chart.codes(type: op_type) },
                      desc: 'Operation account code'
-            given code: ->(code) { ::Operations::Chart.find_account_by(code: code).fetch(:scope) == 'member' } do
+            given code: ->(code) { ::Operations::Chart.find_account_by(code: code)[:scope].to_s == 'member' } do
               requires :uid,
                        type: String,
                        desc: 'The user ID for operation owner.'

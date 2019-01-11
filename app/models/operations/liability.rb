@@ -4,6 +4,14 @@ module Operations
   # {Liability} is a balance sheet operation
   class Liability < Operation
     belongs_to :member
+
+    validates :member_id, presence: {
+      if: ->(l) { l.account.scope.to_s == 'member' }
+    }
+
+    validates :member_id, absence: {
+      if: ->(l) { l.account.scope.to_s != 'member' }
+    }
   end
 end
 

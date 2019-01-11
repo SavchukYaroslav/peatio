@@ -85,8 +85,6 @@ module API
 
         # @deprecated
         def credit_legacy_balance!(amount:, member:, currency:, kind:)
-          kind ||= ::Operations::Chart.find_account_by(code: code).fetch(:kind)
-
           if kind.to_s == 'main'
             member.ac(currency).plus_funds(amount)
           elsif kind.to_s == 'locked'
@@ -97,7 +95,6 @@ module API
 
         # @deprecated
         def debit_legacy_balance!(amount:, member:, currency:, kind:)
-
           if kind.to_s == 'main'
             member.ac(currency).sub_funds(amount)
           elsif kind.to_s == 'locked'

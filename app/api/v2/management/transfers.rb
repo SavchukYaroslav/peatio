@@ -5,7 +5,6 @@ module API
   module V2
     module Management
       class Transfers < Grape::API
-
         desc 'Creates new transfer.' do
           @settings[:scope] = :write_transfers
         end
@@ -60,18 +59,18 @@ module API
 
           Transfer.transaction do
             transfer = Transfer.create!(declared_params.slice(:key, :kind, :desc))
-            declared_params[:operations].map do |pair|
-              shared_params = { currency: pair[:currency],
+            declared_params[:operations].map do |op_pair|
+              shared_params = { currency: op_pair[:currency],
                                 reference: transfer }
 
-              debit_params = pair[:account_src]
-                               .merge(debit: pair[:amount])
+              debit_params = op_pair[:account_src]
+                               .merge(debit: op_pair[:amount])
                                .merge(shared_params)
                                .compact
 
 
-              credit_params = pair[:account_dst]
-                               .merge(credit: pair[:amount])
+              credit_params = op_pair[:account_dst]
+                               .merge(credit: op_pair[:amount])
                                .merge(shared_params)
                                .compact
 

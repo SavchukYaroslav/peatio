@@ -14,7 +14,7 @@ module API
 
           expose :kind,
                  documentation: {
-                   type: Integer,
+                   type: String,
                    desc: 'Transfer Kind.'
                  }
 
@@ -24,11 +24,11 @@ module API
                    desc: 'Transfer Description'
                  }
 
-          # Expose assets, expenses, liabilities, revenues.
+          # Expose assets, expenses, liabilities, revenues if present.
           ::Operation::TYPES.map(&:pluralize).each do |op_t|
             expose op_t,
                    using: Operation,
-                   if: ->(transfer) { transfer.send(op_t).present? },
+                   if: ->(transfer) { transfer.public_send(op_t).present? },
                    documentation: {
                      desc: "Transfer #{op_t}"
                    }
@@ -38,23 +38,3 @@ module API
     end
   end
 end
-
-
-# == Schema Information
-# Schema version: 20181226170925
-#
-# Table name: transfers
-#
-#  id         :integer          not null, primary key
-#  key        :integer          not null
-#  kind       :string(30)       not null
-#  desc       :string(255)      default("")
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#
-# Indexes
-#
-#  index_transfers_on_key   (key) UNIQUE
-#  index_transfers_on_kind  (kind)
-#
-#
