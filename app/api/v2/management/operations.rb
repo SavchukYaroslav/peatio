@@ -142,7 +142,7 @@ module API
                      type: Integer,
                      values: -> { ::Operations::Chart.codes(type: op_type) },
                      desc: 'Operation account code'
-            given code: ->(code) { ::Operations::Chart.find_account_by(code: code)[:scope].to_s == 'member' } do
+            given code: ->(code) { ::Operations::Chart.find_account_by(code: code).try(:fetch, :scope) == 'member' } do
               requires :uid,
                        type: String,
                        desc: 'The user ID for operation owner.'

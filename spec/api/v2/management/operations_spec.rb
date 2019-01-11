@@ -69,7 +69,7 @@ describe API::V2::Management::Operations, type: :request do
         let(:data) { {} }
         let(:signers) { %i[alex] }
         let(:operations_number) { 15 }
-        let!(:operations) { create_list(op_type, operations_number) }
+        let!(:operations) { create_list(op_type, operations_number, :with_member) }
 
         before do
           request(op_type.to_s.pluralize)
@@ -260,7 +260,7 @@ describe API::V2::Management::Operations, type: :request do
 
           context 'wrong account code' do
             before do
-              data[:code] = (::Operations::Chart.codes - [data[:code]]).sample
+              data[:code] = 999
               request(op_type.to_s.pluralize)
             end
 
@@ -272,7 +272,7 @@ describe API::V2::Management::Operations, type: :request do
           let(:amount) { 0.1545 }
           before do
             # Create credit operation to avoid negative balance.
-            create(op_type, credit: amount, member: member, currency: currency)
+            create(op_type, :with_member, credit: amount, member: member, currency: currency)
             data[:debit] = amount
             request(op_type.to_s.pluralize)
           end
@@ -292,7 +292,7 @@ describe API::V2::Management::Operations, type: :request do
           it 'saves operation' do
             # Create one more credit operation to avoid negative balance.
             # So we can create one more debit operation.
-            create(op_type, credit: amount, member: member, currency: currency)
+            create(op_type, :with_member, credit: amount, member: member, currency: currency)
             op_klass = "operations/#{op_type}"
                          .camelize
                          .constantize
