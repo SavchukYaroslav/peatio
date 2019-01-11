@@ -31,7 +31,7 @@ FactoryBot.define do
     trait :with_liabilities do
       after(:create) do |t|
         liabilities_number = Faker::Number.between(1, 5).to_i
-        create_list(:liability, liabilities_number, reference: t)
+        create_list(:liability, liabilities_number, :with_member, reference: t)
       end
     end
 
