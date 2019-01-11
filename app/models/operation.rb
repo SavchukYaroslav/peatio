@@ -16,6 +16,12 @@ class Operation < ActiveRecord::Base
     end
   end
 
+  validate do
+    unless account.type.to_s == self.class.operation_type
+      errors.add(:base, 'Account type and operation type don\'t match')
+    end
+  end
+
   self.abstract_class = true
 
   MEMBER_TYPES = %w[liability].freeze
@@ -24,7 +30,7 @@ class Operation < ActiveRecord::Base
 
   class << self
     def operation_type
-      name.demodulize.downcase.to_sym
+      name.demodulize.downcase
     end
 
     def credit!(amount:, currency:, kind: :main, **opt)
