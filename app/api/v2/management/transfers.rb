@@ -84,7 +84,6 @@ module API
                   with: Entities::Transfer
           status 200
         rescue ActiveRecord::RecordInvalid => e
-          binding.pry
           body errors: e.message
           status 422
         end
