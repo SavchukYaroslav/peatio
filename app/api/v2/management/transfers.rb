@@ -5,6 +5,8 @@ module API
   module V2
     module Management
       class Transfers < Grape::API
+        # TODO: Add endpoints for listing Transfer/Transfers.
+
         desc 'Creates new transfer.' do
           @settings[:scope] = :write_transfers
         end

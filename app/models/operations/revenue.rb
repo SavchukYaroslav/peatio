@@ -3,9 +3,7 @@
 module Operations
   # {Revenue} is a income statement operation
   class Revenue < Operation
-    class << self
 
-    end
   end
 end
 
