@@ -41,13 +41,15 @@ FactoryBot.define do
                                  currency_type: currency.type,
                                  kind: :main)
     end
-    member { create(:member, :level_3) }
+    trait :with_member do
+      member { create(:member, :level_3) }
 
-    # Update legacy balance.
-    after(:create) do |liability|
-      acc = liability.member.ac(liability.currency)
-      acc.plus_funds(liability.credit) unless liability.credit.zero?
-      acc.sub_funds(liability.debit) unless liability.debit.zero?
+      # Update legacy balance.
+      after(:create) do |liability|
+        acc = liability.member.ac(liability.currency)
+        acc.plus_funds(liability.credit) unless liability.credit.zero?
+        acc.sub_funds(liability.debit) unless liability.debit.zero?
+      end
     end
   end
 end
