@@ -1,8 +1,20 @@
 # frozen_string_literal: true
 
-
+# TODO: Add specs for validations.
 module Operations
   class Account < ActiveRecord::Base
+    SCOPES = %w[member platform].freeze
+
+    MEMBER_TYPES = %w[liability].freeze
+    PLATFORM_TYPES = %w[asset expense revenue].freeze
+    TYPES = (MEMBER_TYPES + PLATFORM_TYPES).freeze
+
+    validates :code, presence: true, uniqueness: true
+    validates :type, presence: true, inclusion: { in: TYPES }
+    validates :kind, presence: true, uniqueness: { scope: %i[type currency_type] }
+    validates :currency_type, presence: true, inclusion: { in: Currency.types }
+    validates :scope, presence: true, inclusion: { in: SCOPES }
+
     def self.table_name_prefix
       'operations_'
     end
@@ -33,5 +45,5 @@ end
 #  index_operations_accounts_on_currency_type                    (currency_type)
 #  index_operations_accounts_on_scope                            (scope)
 #  index_operations_accounts_on_type                             (type)
-#  index_operations_accounts_on_type_and_kind_and_currency_type  (type,kind,currency_type)
+#  index_operations_accounts_on_type_and_kind_and_currency_type  (type,kind,currency_type) UNIQUE
 #

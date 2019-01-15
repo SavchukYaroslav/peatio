@@ -182,7 +182,7 @@ ActiveRecord::Schema.define(version: 20190115165813) do
   add_index "operations_accounts", ["code"], name: "index_operations_accounts_on_code", unique: true, using: :btree
   add_index "operations_accounts", ["currency_type"], name: "index_operations_accounts_on_currency_type", using: :btree
   add_index "operations_accounts", ["scope"], name: "index_operations_accounts_on_scope", using: :btree
-  add_index "operations_accounts", ["type", "kind", "currency_type"], name: "index_operations_accounts_on_type_and_kind_and_currency_type", using: :btree
+  add_index "operations_accounts", ["type", "kind", "currency_type"], name: "index_operations_accounts_on_type_and_kind_and_currency_type", unique: true, using: :btree
   add_index "operations_accounts", ["type"], name: "index_operations_accounts_on_type", using: :btree
 
   create_table "orders", force: :cascade do |t|

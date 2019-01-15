@@ -11,6 +11,6 @@ class CreateOperationsAccounts < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :operations_accounts, %i[type kind currency_type]
+    add_index :operations_accounts, %i[type kind currency_type], unique: true
   end
 end

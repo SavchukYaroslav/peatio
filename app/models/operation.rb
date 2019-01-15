@@ -24,9 +24,10 @@ class Operation < ActiveRecord::Base
 
   self.abstract_class = true
 
-  MEMBER_TYPES = %w[liability].freeze
-  PLATFORM_TYPES = %w[asset expense revenue].freeze
-  TYPES = (MEMBER_TYPES + PLATFORM_TYPES).freeze
+  # TODO: Remove TYPES.
+  MEMBER_TYPES = Operations::Account::MEMBER_TYPES
+  PLATFORM_TYPES = Operations::Account::PLATFORM_TYPES
+  TYPES = Operations::Account::TYPES
 
   class << self
     def operation_type
