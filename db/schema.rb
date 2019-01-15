@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190110164859) do
+ActiveRecord::Schema.define(version: 20190115165813) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -167,6 +167,23 @@ ActiveRecord::Schema.define(version: 20190110164859) do
   end
 
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
+
+  create_table "operations_accounts", force: :cascade do |t|
+    t.integer  "code",          limit: 3,   null: false
+    t.string   "type",          limit: 10,  null: false
+    t.string   "kind",          limit: 30,  null: false
+    t.string   "currency_type", limit: 10,  null: false
+    t.string   "description",   limit: 100
+    t.string   "scope",         limit: 10,  null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "operations_accounts", ["code"], name: "index_operations_accounts_on_code", unique: true, using: :btree
+  add_index "operations_accounts", ["currency_type"], name: "index_operations_accounts_on_currency_type", using: :btree
+  add_index "operations_accounts", ["scope"], name: "index_operations_accounts_on_scope", using: :btree
+  add_index "operations_accounts", ["type", "kind", "currency_type"], name: "index_operations_accounts_on_type_and_kind_and_currency_type", using: :btree
+  add_index "operations_accounts", ["type"], name: "index_operations_accounts_on_type", using: :btree
 
   create_table "orders", force: :cascade do |t|
     t.string   "bid",            limit: 10,                                         null: false
