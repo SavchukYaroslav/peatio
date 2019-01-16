@@ -104,13 +104,14 @@ class Deposit < ActiveRecord::Base
         amount: amount + fee,
         currency: currency,
         reference: self
-        )
+      )
 
       # Credit main fiat/crypto Revenue account.
       Operations::Revenue.credit!(
         amount: fee,
         currency: currency,
         reference: self,
+        member_id: member_id
       )
 
       # Credit main fiat/crypto Liability account.

@@ -448,6 +448,12 @@ describe Withdraw do
             Operations::Revenue.balance(currency: subject.currency)
           }.by(subject.fee)
         end
+
+        it 'creates revenue operation from member' do
+          expect{ subject.success! }.to change {
+            Operations::Revenue.where(member: subject.member).count
+          }.by(1)
+        end
       end
     end
     context :load do

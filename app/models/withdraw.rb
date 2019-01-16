@@ -238,7 +238,8 @@ private
       Operations::Revenue.credit!(
         amount:     fee,
         currency:   currency,
-        reference:  self
+        reference:  self,
+        member_id:  member_id
       )
 
       # Debit main fiat/crypto Asset account.

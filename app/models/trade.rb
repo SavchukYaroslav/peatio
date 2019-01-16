@@ -150,14 +150,16 @@ class Trade < ActiveRecord::Base
     Operations::Revenue.credit!(
       amount:    ask_currency_fee,
       currency:  ask.currency,
-      reference: self
+      reference: self,
+      member_id: bid.member_id
     )
 
     # Credit main fiat/crypto Revenue account.
     Operations::Revenue.credit!(
       amount:    bid_currency_fee,
       currency:  bid.currency,
-      reference: self
+      reference: self,
+      member_id: ask.member_id
     )
   end
 end
