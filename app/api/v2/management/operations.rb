@@ -60,7 +60,7 @@ module API
                      desc: 'The currency code.'
             requires :code,
                      type: Integer,
-                     values: -> { ::Operations::Chart.codes(type: op_type) },
+                     values: -> { ::Operations::Account.where(type: op_type).pluck(:code) },
                      desc: 'Operation account code'
             optional :debit,
                      type: BigDecimal,
@@ -140,9 +140,9 @@ module API
                      desc: 'The currency code.'
             requires :code,
                      type: Integer,
-                     values: -> { ::Operations::Chart.codes(type: op_type) },
+                     values: -> { ::Operations::Account.where(type: op_type).pluck(:code) },
                      desc: 'Operation account code'
-            given code: ->(code) { ::Operations::Chart.find_account_by(code: code).try(:fetch, :scope) == 'member' } do
+            given code: ->(code) { ::Operations::Account.find_by(code: code).try(:scope).try(:member?) } do
               requires :uid,
                        type: String,
                        desc: 'The user ID for operation owner.'

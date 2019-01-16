@@ -6,8 +6,8 @@ module API
     module Management
       module Helpers
         def create_operation!(attrs)
-          account = ::Operations::Chart.find_account_by(code: attrs.fetch(:code))
-          if 'member' == account[:scope].to_s
+          account = ::Operations::Account.find_by(code: attrs.fetch(:code))
+          if account.scope.member?
             create_member_operation!(attrs)
           else
             create_platform_operation!(attrs)
@@ -18,9 +18,9 @@ module API
 
         def create_platform_operation!(attrs)
           currency = Currency.find(attrs.fetch(:currency))
-          klass = ::Operations::Chart
-                    .find_account_by(code: attrs.fetch(:code))
-                    .fetch(:type)
+          klass = ::Operations::Account
+                    .find_by(code: attrs.fetch(:code))
+                    .type
                     .yield_self { |type| "operations/#{type}" }
                     .camelize
                     .constantize
@@ -41,9 +41,9 @@ module API
         def create_member_operation!(attrs)
           member = Member.find_by!(uid: attrs.fetch(:uid))
           currency = Currency.find(attrs.fetch(:currency))
-          klass = ::Operations::Chart
-                    .find_account_by(code: attrs.fetch(:code))
-                    .fetch(:type)
+          klass = ::Operations::Account
+                    .find_by(code: attrs.fetch(:code))
+                    .type
                     .yield_self { |type| "operations/#{type}" }
                     .camelize
                     .constantize
@@ -61,7 +61,7 @@ module API
               credit_legacy_balance!(amount: amount,
                                      member: member,
                                      currency: currency,
-                                     kind: op.account.kind)
+                                     account: op.account)
               op
             end
           elsif attrs[:debit].present?
@@ -77,27 +77,27 @@ module API
               debit_legacy_balance!(amount: amount,
                                     member: member,
                                     currency: currency,
-                                    kind: op.account.kind)
+                                    account: op.account)
               op
             end
           end
         end
 
         # @deprecated
-        def credit_legacy_balance!(amount:, member:, currency:, kind:)
-          if kind.to_s == 'main'
+        def credit_legacy_balance!(amount:, member:, currency:, account:)
+          if account.kind.main?
             member.ac(currency).plus_funds(amount)
-          elsif kind.to_s == 'locked'
+          elsif account.kind.locked?
             member.ac(currency).plus_funds(amount)
             member.ac(currency).lock_funds(amount)
           end
         end
 
         # @deprecated
-        def debit_legacy_balance!(amount:, member:, currency:, kind:)
-          if kind.to_s == 'main'
+        def debit_legacy_balance!(amount:, member:, currency:, account:)
+          if account.kind.main?
             member.ac(currency).sub_funds(amount)
-          elsif kind.to_s == 'locked'
+          elsif account.kind.locked?
             member.ac(currency).unlock_and_sub_funds(amount)
           end
         end

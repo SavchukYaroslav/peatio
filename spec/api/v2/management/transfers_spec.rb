@@ -310,6 +310,7 @@ describe API::V2::Management::Transfers, type: :request do
       before do
         # Add token-distribution Liabilities account.
         Rails.configuration.x.chart_of_accounts << coin_distribution_account
+        create(:operations_account, coin_distribution_account)
       end
 
       before do

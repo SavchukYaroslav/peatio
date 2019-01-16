@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # TODO: Add specs for validations.
+# TODO: Add admin rubric for Account.
 module Operations
   class Account < ActiveRecord::Base
     SCOPES = %w[member platform].freeze
@@ -12,7 +13,7 @@ module Operations
     validates :code, presence: true, uniqueness: true
     validates :type, presence: true, inclusion: { in: TYPES }
     validates :kind, presence: true, uniqueness: { scope: %i[type currency_type] }
-    validates :currency_type, presence: true, inclusion: { in: Currency.types }
+    validates :currency_type, presence: true, inclusion: { in: Currency.types.map(&:to_s) }
     validates :scope, presence: true, inclusion: { in: SCOPES }
 
     def self.table_name_prefix
@@ -21,6 +22,18 @@ module Operations
 
     # Type column reserved for STI.
     self.inheritance_column = nil
+
+    # Allows dynamically check scopes.
+    #   scope.platform?
+    def scope
+      super&.inquiry
+    end
+
+    # Allows dynamically check kinds.
+    #   kind.main?
+    def kind
+      super&.inquiry
+    end
   end
 end
 

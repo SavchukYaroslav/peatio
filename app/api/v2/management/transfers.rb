@@ -34,9 +34,9 @@ module API
             requires :account_src, type: Hash do
               requires :code,
                        type: Integer,
-                       values: -> { ::Operations::Chart.codes },
+                       values: -> { ::Operations::Account.pluck(:code) },
                        desc: 'Source Account code.'
-              given code: ->(code) { ::Operations::Chart.find_account_by(code: code).try(:fetch, :scope).to_s == 'member' } do
+              given code: ->(code) { ::Operations::Account.find_by(code: code).try(:scope).try(:member?) } do
                 requires :uid,
                          type: String,
                          desc: 'Source Account User ID (for accounts with member scope).'
@@ -46,9 +46,9 @@ module API
             requires :account_dst, type: Hash do
               requires :code,
                        type: Integer,
-                       values: -> { ::Operations::Chart.codes },
+                       values: -> { ::Operations::Account.pluck(:code) },
                        desc: 'Destination Account code.'
-              given code: ->(code) { ::Operations::Chart.find_account_by(code: code).try(:fetch, :scope).to_s == 'member' } do
+              given code: ->(code) { ::Operations::Account.find_by(code: code).try(:scope).try(:member?) } do
                 requires :uid,
                          type: String,
                          desc: 'Destination Account User ID (for accounts with member scope).'

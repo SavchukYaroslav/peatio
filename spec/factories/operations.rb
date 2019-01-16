@@ -16,30 +16,30 @@ FactoryBot.define do
 
   factory :asset, class: Operations::Asset, parent: :operation do
     code do
-      Operations::Chart.code_for(type: :asset,
-                                 currency_type: currency.type)
+      Operations::Account.find_by(type: :asset,
+                                 currency_type: currency.type).code
     end
   end
 
   factory :expense, class: Operations::Expense, parent: :operation do
     code do
-      Operations::Chart.code_for(type: :expense,
-                                 currency_type: currency.type)
+      Operations::Account.find_by(type: :expense,
+                                  currency_type: currency.type).code
     end
   end
 
   factory :revenue, class: Operations::Revenue, parent: :operation do
     code do
-      Operations::Chart.code_for(type: :revenue,
-                                 currency_type: currency.type)
+      Operations::Account.find_by(type: :revenue,
+                                  currency_type: currency.type).code
     end
   end
 
   factory :liability, class: Operations::Liability, parent: :operation do
     code do
-      Operations::Chart.code_for(type: :liability,
+      Operations::Account.find_by(type: :liability,
                                  currency_type: currency.type,
-                                 kind: :main)
+                                 kind: :main).code
     end
     trait :with_member do
       member { create(:member, :level_3) }

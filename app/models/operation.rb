@@ -6,18 +6,20 @@
 class Operation < ActiveRecord::Base
   belongs_to :reference, polymorphic: true
   belongs_to :currency, foreign_key: :currency_id
+  belongs_to :account, class_name: 'Operations::Account',
+             foreign_key: :code, primary_key: :code
 
   validates :credit, :debit, numericality: { greater_than_or_equal_to: 0 }
   validates :currency, :code, presence: true
 
   validate do
-    unless account.currency_type.to_s == currency&.type&.to_s
+    unless account.currency_type == currency&.type
       errors.add(:currency, 'type and account currency type don\'t match')
     end
   end
 
   validate do
-    unless account.type.to_s == self.class.operation_type
+    unless account.type == self.class.operation_type
       errors.add(:base, 'Account type and operation type don\'t match')
     end
   end
@@ -37,11 +39,11 @@ class Operation < ActiveRecord::Base
     def credit!(amount:, currency:, kind: :main, **opt)
       return if amount.zero?
 
-      opt[:code] ||= Operations::Chart.code_for(
+      opt[:code] ||= Operations::Account.find_by(
         type:          operation_type,
         kind:          kind,
         currency_type: currency.type
-      )
+      ).code
 
       opt.merge(credit: amount, currency_id: currency.id)
          .yield_self { |attr| new(attr) }
@@ -51,11 +53,11 @@ class Operation < ActiveRecord::Base
     def debit!(amount:, currency:, kind: :main, **opt)
       return if amount.zero?
 
-      opt[:code] ||= Operations::Chart.code_for(
+      opt[:code] ||= Operations::Account.find_by(
         type:          operation_type,
         kind:          kind,
         currency_type: currency.type
-      )
+      ).code
 
       opt.merge(debit: amount, currency_id: currency.id)
          .yield_self { |attr| new(attr) }
@@ -88,8 +90,8 @@ class Operation < ActiveRecord::Base
     end
   end
 
-  def account
-    Operations::Chart.find_account_by(code: code)
-                     .yield_self { |ch| OpenStruct.new(ch) }
-  end
+  # def account
+  #   Operations::Chart.find_account_by(code: code)
+  #                    .yield_self { |ch| OpenStruct.new(ch) }
+  # end
 end
