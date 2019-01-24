@@ -26,11 +26,6 @@ class Operation < ActiveRecord::Base
 
   self.abstract_class = true
 
-  # # TODO: Remove TYPES.
-  # MEMBER_TYPES = Operations::Account::MEMBER_TYPES
-  # PLATFORM_TYPES = Operations::Account::PLATFORM_TYPES
-  # TYPES = Operations::Account::TYPES
-
   class << self
     def operation_type
       name.demodulize.downcase

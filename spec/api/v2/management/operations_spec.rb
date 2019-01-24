@@ -275,7 +275,6 @@ describe API::V2::Management::Operations, type: :request do
             create(op_type, :with_member, credit: amount,
                    member: member, currency: currency)
             data[:debit] = amount
-            # binding.pry
             request(op_type.to_s.pluralize)
           end
 
