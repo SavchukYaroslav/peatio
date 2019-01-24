@@ -16,7 +16,7 @@ describe API::V2::Management::Operations, type: :request do
       post_json "/api/v2/management/#{op_type}", multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
-    Operation::PLATFORM_TYPES.each do |op_type|
+    Operations::Account::PLATFORM_TYPES.each do |op_type|
       context op_type do
         let(:data) { {} }
         let(:signers) { %i[alex] }
@@ -64,7 +64,7 @@ describe API::V2::Management::Operations, type: :request do
       end
     end
 
-    Operation::MEMBER_TYPES.each do |op_type|
+    Operations::Account::MEMBER_TYPES.each do |op_type|
       context op_type do
         let(:data) { {} }
         let(:signers) { %i[alex] }
@@ -138,7 +138,7 @@ describe API::V2::Management::Operations, type: :request do
       post_json "/api/v2/management/#{op_type}/new", multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
-    Operation::PLATFORM_TYPES.each do |op_type|
+    Operations::Account::PLATFORM_TYPES.each do |op_type|
       context op_type do
         let(:currency) { Currency.coins.sample }
         let(:signers) { %i[alex jeff] }
@@ -214,7 +214,7 @@ describe API::V2::Management::Operations, type: :request do
       end
     end
 
-    Operation::MEMBER_TYPES.each do |op_type|
+    Operations::Account::MEMBER_TYPES.each do |op_type|
       context op_type do
         let(:currency) { Currency.coins.sample }
         let(:signers) { %i[alex jeff] }

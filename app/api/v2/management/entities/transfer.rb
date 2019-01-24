@@ -25,7 +25,7 @@ module API
                  }
 
           # Expose assets, expenses, liabilities, revenues if present.
-          ::Operation::TYPES.map(&:pluralize).each do |op_t|
+          ::Operations::Account::TYPES.map(&:pluralize).each do |op_t|
             expose op_t,
                    using: Operation,
                    if: ->(transfer) { transfer.public_send(op_t).present? },

@@ -6,11 +6,11 @@ module Operations
     belongs_to :member
 
     validates :member_id, presence: {
-      if: ->(liability) { liability.account.scope.to_s == 'member' }
+      if: ->(liability) { liability.account.scope == 'member' }
     }
 
     validates :member_id, absence: {
-      if: ->(liability) { liability.account.scope.to_s != 'member' }
+      if: ->(liability) { liability.account.scope != 'member' }
     }
   end
 end

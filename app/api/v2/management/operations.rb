@@ -13,7 +13,7 @@ module API
         # POST: api/v2/management/assets/new
         # POST: api/v2/management/expenses/new
         # POST: api/v2/management/revenues/new
-        Operation::PLATFORM_TYPES.each do |op_type|
+        ::Operations::Account::PLATFORM_TYPES.each do |op_type|
           op_type_plural = op_type.to_s.pluralize
 
           desc "Returns #{op_type_plural} as paginated collection." do
@@ -88,7 +88,7 @@ module API
         # POST: api/v2/management/liabilities
         #
         # POST: api/v2/management/liabilities/new
-        Operation::MEMBER_TYPES.each do |op_type|
+        ::Operations::Account::MEMBER_TYPES.each do |op_type|
           op_type_plural = op_type.to_s.pluralize
 
           desc "Returns #{op_type_plural} as paginated collection." do

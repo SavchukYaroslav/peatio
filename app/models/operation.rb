@@ -26,10 +26,10 @@ class Operation < ActiveRecord::Base
 
   self.abstract_class = true
 
-  # TODO: Remove TYPES.
-  MEMBER_TYPES = Operations::Account::MEMBER_TYPES
-  PLATFORM_TYPES = Operations::Account::PLATFORM_TYPES
-  TYPES = Operations::Account::TYPES
+  # # TODO: Remove TYPES.
+  # MEMBER_TYPES = Operations::Account::MEMBER_TYPES
+  # PLATFORM_TYPES = Operations::Account::PLATFORM_TYPES
+  # TYPES = Operations::Account::TYPES
 
   class << self
     def operation_type
@@ -89,9 +89,4 @@ class Operation < ActiveRecord::Base
       end
     end
   end
-
-  # def account
-  #   Operations::Chart.find_account_by(code: code)
-  #                    .yield_self { |ch| OpenStruct.new(ch) }
-  # end
 end

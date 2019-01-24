@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 describe API::V2::Management::Entities::Operation do
-  Operation::PLATFORM_TYPES.each do |op_type|
+  Operations::Account::PLATFORM_TYPES.each do |op_type|
     context op_type do
       let(:record) { create(op_type) }
 
@@ -25,7 +25,7 @@ describe API::V2::Management::Entities::Operation do
     end
   end
 
-  Operation::MEMBER_TYPES.each do |op_type|
+  Operations::Account::MEMBER_TYPES.each do |op_type|
     context op_type do
       let(:record) { create(op_type, :with_member) }
 
