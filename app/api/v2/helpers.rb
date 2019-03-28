@@ -54,7 +54,7 @@ module API
 
       def build_order(attrs)
         (attrs[:side] == 'sell' ? OrderAsk : OrderBid).new \
-          state:         ::Order::WAIT,
+          state:         ::Order::PENDING,
           member:        current_user,
           ask:           current_market&.base_unit,
           bid:           current_market&.quote_unit,
@@ -65,6 +65,10 @@ module API
           origin_volume: attrs[:volume]
       end
 
+      def check_balance(order)
+        current_user.accounts.find_by_currency_id(order.currency).balance >= order.volume
+      end
+
       def create_order(attrs)
         create_order_errors = {
           ::Account::AccountError => 'market.account.insufficient_balance',
@@ -73,12 +77,30 @@ module API
         }
 
         order = build_order(attrs)
-        Ordering.new(order).submit
+        raise ::Account::AccountError unless check_balance(order)
+        submit(order)
         order
       rescue => e
         message = create_order_errors.fetch(e.class, 'market.order.create_error')
         report_exception_to_screen(e)
         error!({ errors: [message] }, 422)
+      end
+
+      def submit(order)
+        ActiveRecord::Base.transaction do
+          order.fix_number_precision # number must be fixed before computing locked
+          order.locked = order.origin_locked = order.compute_locked
+          order.save!
+        end
+
+        AMQPQueue.enqueue \
+          :order_processor,
+          { action: 'submit', order: order.attributes },
+          { persistent: false }
+      end
+
+      def cancel(order)
+        AMQPQueue.enqueue(:matching, action: 'cancel', order: order.to_matching_attributes)
       end
 
       def order_param
