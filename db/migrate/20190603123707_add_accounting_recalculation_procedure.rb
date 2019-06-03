@@ -12,7 +12,7 @@ class AddAccountingRecalculationProcedure < ActiveRecord::Migration[5.2]
 
            DECLARE v_finished INTEGER DEFAULT 0;
           
-           DECLARE id bigINt DEFAULT 0;
+           DECLARE id bigint DEFAULT 0;
            DECLARE currency_id varchar(10) DEFAULT "";
            DECLARE member_id bigINt DEFAULT 0;
           
@@ -52,11 +52,24 @@ class AddAccountingRecalculationProcedure < ActiveRecord::Migration[5.2]
            CLOSE account_cursor;
           END
         SQL
+
+        execute <<-SQL
+          CREATE EVENT acc_secondly
+            ON SCHEDULE
+              EVERY 1 SECOND
+            COMMENT 'Each second recalculate account balances.'
+            DO
+              CALL recalculate_accounts();
+        SQL
       end
 
       dir.down do
         execute <<-SQL
           DROP PROCEDURE IF EXISTS recalculate_accounts;
+        SQL
+
+        execute <<-SQL
+          DROP EVENT IF EXISTS acc_secondly
         SQL
       end
     end
