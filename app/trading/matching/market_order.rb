@@ -22,12 +22,25 @@ module Matching
     def trade_with(counter_order, counter_book)
       if counter_order.is_a?(LimitOrder)
         trade_price  = counter_order.price
-        trade_volume = [volume, volume_limit(trade_price), counter_order.volume].min
+        trade_volume = [volume,
+                        volume_limit(trade_price),
+                        counter_order.volume].min.round(4, BigDecimal::ROUND_DOWN)
+
+        # If market order creates trade with tiny volume skip it.
+        return if trade_volume.zero?
+
         trade_funds  = trade_price*trade_volume
         [trade_price, trade_volume, trade_funds]
       elsif price = counter_book.best_limit_price
         trade_price  = price
-        trade_volume = [volume, volume_limit(trade_price), counter_order.volume, counter_order.volume_limit(trade_price)].min
+        trade_volume = [volume,
+                        volume_limit(trade_price),
+                        counter_order.volume,
+                        counter_order.volume_limit(trade_price)].min.round(4, BigDecimal::ROUND_DOWN)
+
+        # If market order creates trade with tiny volume skip it.
+        return if trade_volume.zero?
+
         trade_funds  = trade_price*trade_volume
         [trade_price, trade_volume, trade_funds]
       end
