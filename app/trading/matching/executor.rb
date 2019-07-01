@@ -148,8 +148,10 @@ module Matching
 
     def strike(trade, order, outcome_account, income_account)
       outcome_value, income_value = OrderAsk === order ? [trade.volume, trade.funds] : [trade.funds, trade.volume]
-      fee                         = income_value * order.fee
-      real_income_value           = income_value - fee
+
+      # relative_fee = order.id == [trade.bid_id, trade.ask_id].min ? trade.market
+      fee               = income_value * order.fee
+      real_income_value = income_value - fee
 
       outcome_account.assign_attributes outcome_account.attributes_after_unlock_and_sub_funds!(outcome_value)
       income_account.assign_attributes income_account.attributes_after_plus_funds!(real_income_value)

@@ -44,7 +44,7 @@ class OrderAsk < Order
 end
 
 # == Schema Information
-# Schema version: 20190213104708
+# Schema version: 20190701144129
 #
 # Table name: orders
 #
@@ -55,7 +55,6 @@ end
 #  price          :decimal(32, 16)
 #  volume         :decimal(32, 16)  not null
 #  origin_volume  :decimal(32, 16)  not null
-#  fee            :decimal(32, 16)  default(0.0), not null
 #  state          :integer          not null
 #  type           :string(8)        not null
 #  member_id      :integer          not null

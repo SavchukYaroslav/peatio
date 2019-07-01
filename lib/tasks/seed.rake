@@ -54,7 +54,9 @@ namespace :seed do
                                    min_ask_price:  :min_price,
                                    max_bid_price:  :max_price,
                                    min_ask_amount: :min_amount,
-                                   min_bid_amount: :min_amount }
+                                   min_bid_amount: :min_amount,
+                                   ask_fee:        :taker_fee,
+                                   bid_fee:        :maker_fee }
 
           legacy_keys_mappings.each do |old_key, new_key|
             legacy_key_value = hash.delete(old_key)

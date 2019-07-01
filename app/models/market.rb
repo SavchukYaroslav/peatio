@@ -27,6 +27,9 @@ class Market < ApplicationRecord
   # sale - user can't view but can trade with market orders.
   # presale - user can't view and trade. Admin can trade.
 
+  # Max relative fee value is 50%.
+  MAX_FEE = 0.5.freeze
+
   attr_readonly :base_unit, :quote_unit, :amount_precision, :price_precision
   delegate :bids, :asks, :trades, :ticker, :h24_volume, :avg_h24_price,
            to: :global
@@ -39,7 +42,7 @@ class Market < ApplicationRecord
   validate { errors.add(:id, :taken) if Market.where(base_unit: quote_unit, quote_unit: base_unit).present? }
   validates :id, uniqueness: { case_sensitive: false }, presence: true
   validates :base_unit, :quote_unit, presence: true
-  validates :ask_fee, :bid_fee, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 0.5 }
+  validates :maker_fee, :taker_fee, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_FEE }
   validates :amount_precision, :price_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :base_unit, :quote_unit, inclusion: { in: -> (_) { Currency.codes } }
   validate  :validate_preciseness
@@ -108,7 +111,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20190624102330
+# Schema version: 20190701142501
 #
 # Table name: markets
 #
@@ -117,8 +120,8 @@ end
 #  quote_unit       :string(10)       not null
 #  amount_precision :integer          default(4), not null
 #  price_precision  :integer          default(4), not null
-#  ask_fee          :decimal(17, 16)  default(0.0), not null
-#  bid_fee          :decimal(17, 16)  default(0.0), not null
+#  taker_fee        :decimal(17, 16)  default(0.0), not null
+#  maker_fee        :decimal(17, 16)  default(0.0), not null
 #  min_price        :decimal(32, 16)  default(0.0), not null
 #  max_price        :decimal(32, 16)  default(0.0), not null
 #  min_amount       :decimal(32, 16)  default(0.0), not null
