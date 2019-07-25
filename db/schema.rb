@@ -11,6 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2019_07_23_202251) do
+
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
     t.string "currency_id", limit: 10, null: false
@@ -131,9 +132,9 @@ ActiveRecord::Schema.define(version: 2019_07_23_202251) do
   end
 
   create_table "jobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "state", limit: 30, default: "created", null: false
     t.integer "rows", default: 0, null: false
-    t.string "description"
+    t.string "name"
+    t.string "state", limit: 30, default: "created", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

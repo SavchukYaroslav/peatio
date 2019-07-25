@@ -17,8 +17,8 @@ class AddAccountRecalculationProcedure < ActiveRecord::Migration[5.2]
         DECLARE job_id INT DEFAULT 0;
 
         -- Create Compact job
-        INSERT INTO jobs (`description`, `state`, created_at, updated_at)
-        VALUES ('compact', 'created', NOW(), NOW());
+        INSERT INTO jobs (`name`, `state`, created_at, updated_at)
+        VALUES ('compactor', 'created', NOW(), NOW());
 
         SELECT LAST_INSERT_ID() INTO job_id;
 

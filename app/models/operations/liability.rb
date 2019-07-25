@@ -33,7 +33,7 @@ module Operations
 end
 
 # == Schema Information
-# Schema version: 20190722152947
+# Schema version: 20190723202251
 #
 # Table name: liabilities
 #
