@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_23_202251) do
+ActiveRecord::Schema.define(version: 2019_07_29_124305) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -241,6 +241,7 @@ ActiveRecord::Schema.define(version: 2019_07_23_202251) do
     t.decimal "funds", precision: 32, scale: 16, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "state", limit: 1, null: false
     t.index ["ask_id"], name: "index_trades_on_ask_id"
     t.index ["ask_member_id", "bid_member_id"], name: "index_trades_on_ask_member_id_and_bid_member_id"
     t.index ["bid_id"], name: "index_trades_on_bid_id"

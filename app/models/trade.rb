@@ -8,6 +8,11 @@ class Trade < ApplicationRecord
 
   enumerize :trend, in: { up: 1, down: 0 }
 
+  # TODO: Add desc of states.
+  # pending -
+  # done -
+  enumerize :state, in: { pending: 0, done: 1 }
+
   belongs_to :ask, class_name: 'OrderAsk', foreign_key: :ask_id, required: true
   belongs_to :bid, class_name: 'OrderBid', foreign_key: :bid_id, required: true
   belongs_to :ask_member, class_name: 'Member', foreign_key: :ask_member_id, required: true
@@ -157,7 +162,7 @@ class Trade < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20190213104708
+# Schema version: 20190729124305
 #
 # Table name: trades
 #
@@ -173,6 +178,7 @@ end
 #  funds         :decimal(32, 16)  not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  state         :integer          not null
 #
 # Indexes
 #
