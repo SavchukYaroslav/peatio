@@ -1,3 +1,11 @@
+GIT
+  remote: http://github.com/rubykube/vault-rails
+  revision: ef9b8626e4bf41dcea8696c4aec91e543ddd80a5
+  specs:
+    vault-rails (0.5.0)
+      rails (>= 4.1)
+      vault (~> 0.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -248,6 +256,25 @@ GEM
       eventmachine
       jwt
       mysql2
+    peatio-bitcoincash (0.1.0)
+      activesupport (~> 5.2.3)
+      better-faraday (~> 1.0.5)
+      cash-addr (~> 0.2.0)
+      faraday (~> 0.15.4)
+      memoist (~> 0.16.0)
+      peatio (~> 0.6.1)
+    peatio-litecoin (0.2.0)
+      activesupport (~> 5.2.3)
+      better-faraday (~> 1.0.5)
+      faraday (~> 0.15.4)
+      memoist (~> 0.16.0)
+      peatio (~> 0.6.1)
+    peatio-ripple (0.1.1)
+      activesupport (~> 5.2.3)
+      better-faraday (~> 1.0.5)
+      faraday (~> 0.15.4)
+      memoist (~> 0.16.0)
+      peatio (~> 0.6.1)
     popper_js (1.14.5)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -384,9 +411,6 @@ GEM
       activerecord (>= 3)
     vault (0.12.0)
       aws-sigv4
-    vault-rails (0.5.0)
-      rails (>= 4.1)
-      vault (~> 0.5)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -451,6 +475,9 @@ DEPENDENCIES
   mysql2 (~> 0.5.2)
   net-http-persistent (~> 3.0.1)
   peatio (~> 0.6.1)
+  peatio-bitcoincash (~> 0.1.0)
+  peatio-litecoin (~> 0.2.0)
+  peatio-ripple (~> 0.1.1)
   pry-byebug (~> 3.7)
   puma (~> 3.12.0)
   rack-attack (~> 5.4.2)
@@ -470,7 +497,7 @@ DEPENDENCIES
   validate_url (~> 1.0.4)
   validates_lengths_from_database (~> 0.7.0)
   vault (~> 0.12)
-  vault-rails (= 0.5.0)
+  vault-rails!
   webmock (~> 3.5)
 
 RUBY VERSION
