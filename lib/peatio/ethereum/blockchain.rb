@@ -99,6 +99,13 @@ module Ethereum
       transaction
     end
 
+    def contract_name(address)
+      data = abi_encode('name()')
+      abi = client.json_rpc(:eth_call, [{ to: address, data: data }, 'latest'])
+      binding.pry
+      Ethereum::ABI.decode([:bytes], abi)
+    end
+
     private
 
     def load_erc20_balance(address, currency)

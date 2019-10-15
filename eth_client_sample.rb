@@ -67,7 +67,8 @@ end
 def contract_name
   data = abi_encode('name()')
   abi = client.json_rpc(:eth_call, [{ to: '0xdac17f958d2ee523a2206206994597c13d831ec7', data: data }, 'latest'])
-  Ethereum::ABI.decode_type(:string, abi)
+  decoder = Ethereum::Decoder.new
+  decoder.decode('string', abi)
 end
 
 

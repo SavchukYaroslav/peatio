@@ -394,4 +394,27 @@ describe Ethereum::Blockchain do
     end
   end
 
+  context :contract_name do
+    around do |example|
+      # WebMock.disable_net_connect!
+      example.run
+      WebMock.allow_net_connect!
+    end
+
+    let(:blockchain) do
+      b = Ethereum::Blockchain.new
+      b.configure(server: 'https://mainnet.infura.io/v3/06f27c7a2e6b458cac8937b33675c3dc')
+      b
+    end
+
+    it 'kek' do
+      contract = blockchain.contract_name('0xdac17f958d2ee523a2206206994597c13d831ec7')
+      expect(contract).to eq('TUSD')
+    end
+
+    it 'kek2' do
+      contract = blockchain.contract_name('0xB8c77482e45F1F44dE1745F52C74426C631bDD52')
+      expect(contract).to eq('TUSD')
+    end
+  end
 end
